@@ -1,6 +1,8 @@
 package com.julook.domain.home.find.service.impl;
 
 import com.julook.domain.home.find.dto.MakInfoDTO;
+import com.julook.domain.home.find.dto.PageableInfoDTO;
+import com.julook.domain.home.find.dto.response.FindByUserResponseDTO;
 import com.julook.domain.home.find.entity.MakInfo;
 import com.julook.domain.home.find.repository.FindByUserRepository;
 import com.julook.domain.home.find.service.FindByUserService;
@@ -24,12 +26,32 @@ public class FindByUserServiceImpl implements FindByUserService {
 
 
     @Override
-    public List<MakInfoDTO> getMakInfoListByUserPreferences(Long lastMakNum, List<String> categories, String sort, Pageable pageable) {
+    public FindByUserResponseDTO getMakInfoListByUserPreferences(Long lastMakNum, List<String> categories, String sort, Pageable pageable) {
         List<MakInfo> makInfoList = findByUserRepository.findByPreferences(lastMakNum, categories, sort, pageable);
 
         List<MakInfoDTO> makInfoDTOList = convertToDTOList(makInfoList);
 
-        return makInfoDTOList;
+        int totalCount = makInfoList.get(0).getMakSeq().intValue();
+        int nextCursor = makInfoList.isEmpty() ? 0 : makInfoList.get(makInfoList.size() - 1).getMakSeq().intValue();
+
+        List<PageableInfoDTO> pageData = new ArrayList<>();
+        PageableInfoDTO pageInfo = new PageableInfoDTO();
+        pageInfo.setCurrentPage(pageable.getPageNumber()+1);
+        pageInfo.setSize(pageable.getPageSize());
+        pageInfo.setFirst(pageable.getPageNumber() == 0);
+        pageInfo.setLast(makInfoList.size() < pageable.getPageSize());
+        pageInfo.setTotalMakElements(totalCount);
+        pageInfo.setTotalPages((int) Math.ceil((double) totalCount / pageable.getPageSize()+1));
+        pageData.add(pageInfo);
+
+        FindByUserResponseDTO responseDTO = FindByUserResponseDTO.builder()
+                .contents(makInfoDTOList)
+                .totalCount(totalCount)
+                .nextCursor(nextCursor)
+                .pageInfo(pageData)
+                .build();
+
+        return responseDTO;
     }
 
     /**
