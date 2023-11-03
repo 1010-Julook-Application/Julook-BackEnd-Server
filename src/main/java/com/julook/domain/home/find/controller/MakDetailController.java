@@ -1,7 +1,6 @@
 package com.julook.domain.home.find.controller;
 
-import com.julook.domain.home.common.dto.response.ApiResponseDTO;
-import com.julook.domain.home.find.dto.response.FindByUserResponseDTO;
+import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.home.find.dto.response.MakDetailResponseDTO;
 import com.julook.domain.home.find.service.MakDetailService;
 import org.springframework.beans.factory.annotation.Autowired;

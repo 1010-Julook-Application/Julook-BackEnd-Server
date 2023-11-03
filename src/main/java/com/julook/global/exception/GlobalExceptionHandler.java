@@ -2,9 +2,8 @@ package com.julook.global.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.julook.domain.home.common.dto.response.ErrorResponseDTO;
+import com.julook.domain.common.dto.response.ErrorResponseDTO;
 import com.julook.global.codes.ErrorCode;
-import com.julook.domain.home.common.dto.response.ApiResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

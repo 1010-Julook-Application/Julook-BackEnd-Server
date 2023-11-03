@@ -1,7 +1,6 @@
 package com.julook.domain.home.find.controller;
 
-import com.julook.domain.home.common.dto.response.ApiResponseDTO;
-import com.julook.domain.home.find.dto.MakInfoDTO;
+import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.home.find.service.FindByUserService;
 import com.julook.domain.home.find.dto.response.FindByUserResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.julook.domain.home.find.dto.PageableInfoDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 

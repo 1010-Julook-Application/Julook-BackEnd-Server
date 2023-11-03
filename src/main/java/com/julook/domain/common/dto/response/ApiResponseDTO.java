@@ -1,7 +1,6 @@
-package com.julook.domain.home.common.dto.response;
+package com.julook.domain.common.dto.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
