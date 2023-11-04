@@ -9,7 +9,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WishResponseDTO {
+public class UserActionResponseDTO {
     private Boolean isSuccess;
     private String message;
+
 }
+

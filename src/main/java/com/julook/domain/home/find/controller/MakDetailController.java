@@ -29,7 +29,7 @@ public class MakDetailController {
         MakDetailResponseDTO detailInfo = makDetailService.getMakDetailInfo(makSeq);
 
         ApiResponseDTO<MakDetailResponseDTO> response = ApiResponseDTO.<MakDetailResponseDTO>builder()
-                .resultCode(HttpStatus.OK.value())
+                .status(HttpStatus.OK.value())
                 .resultMsg(HttpStatus.OK.getReasonPhrase())
                 .result(detailInfo)
                 .build();

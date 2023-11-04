@@ -44,7 +44,6 @@ public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
     @Transactional
     @Override
     public Boolean updateEvaluateMak(EvaluateMakRequestDTO userRequest) {
-        System.out.println(userRequest.getLikeMak());
         long affectedRows = jpaQueryFactory
                 .update(qEvaluateMak)
                 .set(qEvaluateMak.userLikedMak, userRequest.getLikeMak())

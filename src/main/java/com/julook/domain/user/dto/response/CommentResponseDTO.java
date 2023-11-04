@@ -2,14 +2,15 @@ package com.julook.domain.user.dto.response;
 
 import lombok.*;
 
-import java.security.Timestamp;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EvaluateMakResponseDTO {
+public class CommentResponseDTO {
+    private UUID commentId;
     private Boolean isSuccess;
     private String message;
 }

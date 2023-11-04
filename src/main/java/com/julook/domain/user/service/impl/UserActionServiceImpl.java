@@ -1,30 +1,37 @@
 package com.julook.domain.user.service.impl;
 
+import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
-import com.julook.domain.user.dto.response.EvaluateMakResponseDTO;
-import com.julook.domain.user.dto.response.WishResponseDTO;
+import com.julook.domain.user.dto.response.CommentResponseDTO;
+import com.julook.domain.user.dto.response.UserActionResponseDTO;
+import com.julook.domain.user.entity.Comment;
+import com.julook.domain.user.repository.CommentRepository;
 import com.julook.domain.user.repository.EvaluateMakRepository;
 import com.julook.domain.user.repository.WishListRepository;
 import com.julook.domain.user.service.UserActionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserActionServiceImpl implements UserActionService {
     private final WishListRepository wishListRepository;
     private final EvaluateMakRepository evaluateMakRepository;
+    private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
 
-    public UserActionServiceImpl(WishListRepository wishListRepository, EvaluateMakRepository evaluateMakRepository, ModelMapper modelMapper) {
+    public UserActionServiceImpl(WishListRepository wishListRepository, EvaluateMakRepository evaluateMakRepository, CommentRepository commentRepository, ModelMapper modelMapper) {
         this.wishListRepository = wishListRepository;
         this.evaluateMakRepository = evaluateMakRepository;
+        this.commentRepository = commentRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
-    public WishResponseDTO addWishList(WishRequestDTO userRequest) {
-        WishResponseDTO responseDTO = new WishResponseDTO();
+    public UserActionResponseDTO addWishList(WishRequestDTO userRequest) {
+        UserActionResponseDTO responseDTO = new UserActionResponseDTO();
         String message;
         try {
             Boolean isSuccess = wishListRepository.addWishList(userRequest);
@@ -48,8 +55,8 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public WishResponseDTO deleteWishList(WishRequestDTO userRequest) {
-        WishResponseDTO responseDTO = new WishResponseDTO();
+    public UserActionResponseDTO deleteWishList(WishRequestDTO userRequest) {
+        UserActionResponseDTO responseDTO = new UserActionResponseDTO();
         String message;
         try {
             Boolean isSuccess = wishListRepository.deleteWishList(userRequest);
@@ -73,8 +80,8 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public EvaluateMakResponseDTO evaluateMak(EvaluateMakRequestDTO userRequest) {
-        EvaluateMakResponseDTO responseDTO = new EvaluateMakResponseDTO();
+    public UserActionResponseDTO evaluateMak(EvaluateMakRequestDTO userRequest) {
+        UserActionResponseDTO responseDTO = new UserActionResponseDTO();
         String message;
         Boolean isSuccess;
         try {
@@ -106,5 +113,87 @@ public class UserActionServiceImpl implements UserActionService {
 
         return responseDTO;
 
+    }
+
+    @Override
+    public CommentResponseDTO insertUserComment(CommentRequestDTO userRequest) {
+        CommentResponseDTO commentResponse = new CommentResponseDTO();
+        Comment comment = new Comment();
+        String message;
+        boolean isSuccess;
+        try {
+            UUID commentId = commentRepository.insertUserComment(userRequest);
+
+            if (commentId != null) {
+                isSuccess = true;
+                message = "댓글 달기 성공";
+            } else {
+                isSuccess = false;
+                message = "댓글 달기 실패";
+            }
+
+            commentResponse.setCommentId(commentId);
+            commentResponse.setIsSuccess(isSuccess);
+            commentResponse.setMessage(message);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            commentResponse.setIsSuccess(false);
+            commentResponse.setMessage("DB INSERT 오류 발생");
+            return null;
+        }
+        return  commentResponse;
+    }
+
+
+    @Override
+    public UserActionResponseDTO updateUserComment(CommentRequestDTO userRequest) {
+        UserActionResponseDTO responseDTO = new UserActionResponseDTO();
+        String message;
+        try {
+            Boolean isSuccess = commentRepository.updateUserComment(userRequest);
+
+            if (isSuccess) {
+                message = "댓글 수정 성공";
+            } else {
+                message = "댓글 수정 실패 - 해당 댓글 없음";
+            }
+
+            responseDTO.setIsSuccess(isSuccess);
+            responseDTO.setMessage(message);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            responseDTO.setIsSuccess(false);
+            responseDTO.setMessage("DB UPDATE 오류 발생");
+            return null;
+        }
+        return  responseDTO;
+    }
+
+
+    @Override
+    public UserActionResponseDTO deleteUserComment(CommentRequestDTO userRequest) {
+        UserActionResponseDTO responseDTO = new UserActionResponseDTO();
+        String message;
+        try {
+            Boolean isSuccess = commentRepository.deleteUserComment(userRequest);
+
+            if (isSuccess) {
+                message = "댓글 삭제 성공";
+            } else {
+                message = "댓글 삭제 실패 - 해당 댓글 없음";
+            }
+
+            responseDTO.setIsSuccess(isSuccess);
+            responseDTO.setMessage(message);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            responseDTO.setIsSuccess(false);
+            responseDTO.setMessage("DB DELETE 오류 발생");
+            return null;
+        }
+        return  responseDTO;
     }
 }

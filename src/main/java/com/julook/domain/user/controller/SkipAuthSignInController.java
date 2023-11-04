@@ -36,7 +36,7 @@ public class SkipAuthSignInController {
         SkipSignInResponseDTO generateResults = skipAuthSignInService.registerUserResults(userID, nickName, gender, ageGroup);
 
         ApiResponseDTO<SkipSignInResponseDTO> response = ApiResponseDTO.<SkipSignInResponseDTO>builder()
-                .resultCode(HttpStatus.OK.value())
+                .status(HttpStatus.OK.value())
                 .resultMsg(HttpStatus.OK.getReasonPhrase())
                 .result(generateResults)
                 .build();

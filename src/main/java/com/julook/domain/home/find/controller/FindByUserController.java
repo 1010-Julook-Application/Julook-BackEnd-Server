@@ -56,7 +56,7 @@ public class FindByUserController {
         FindByUserResponseDTO makInfoList = findByUserService.getMakInfoListByUserPreferences(lastMakNum, categories, sort, pageable);
 
         ApiResponseDTO<FindByUserResponseDTO> response = ApiResponseDTO.<FindByUserResponseDTO>builder()
-                .resultCode(HttpStatus.OK.value())
+                .status(HttpStatus.OK.value())
                 .resultMsg(HttpStatus.OK.getReasonPhrase())
                 .result(makInfoList)
                 .build();

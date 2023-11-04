@@ -1,7 +1,6 @@
 package com.julook.domain.user.repository.impl;
 
 import com.julook.domain.user.dto.request.WishRequestDTO;
-import com.julook.domain.user.dto.response.WishResponseDTO;
 import com.julook.domain.user.entity.QWishList;
 import com.julook.domain.user.repository.WishListRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -10,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-
-import static org.springframework.data.jpa.domain.Specification.where;
 
 @Repository
 public class WishListRepositoryImpl implements WishListRepositoryCustom {

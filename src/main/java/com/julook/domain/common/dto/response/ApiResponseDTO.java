@@ -2,13 +2,12 @@ package com.julook.domain.common.dto.response;
 
 
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class ApiResponseDTO<T> {
 
     // API 응답 코드 Response
-    private int resultCode;
+    private int status;
 
     // API 응답 코드 Message
     private String resultMsg;
@@ -17,8 +16,8 @@ public class ApiResponseDTO<T> {
     private T result;
 
     @Builder
-    public ApiResponseDTO(final int resultCode, final String resultMsg, final T result) {
-        this.resultCode = resultCode;
+    public ApiResponseDTO(final int status, final String resultMsg, final T result) {
+        this.status = status;
         this.resultMsg = resultMsg;
         this.result = result;
     }
