@@ -1,7 +1,9 @@
 package com.julook.domain.user.controller;
 
 import com.julook.domain.common.dto.response.ApiResponseDTO;
+import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
+import com.julook.domain.user.dto.response.EvaluateMakResponseDTO;
 import com.julook.domain.user.dto.response.SkipSignInResponseDTO;
 import com.julook.domain.user.dto.response.WishResponseDTO;
 import com.julook.domain.user.service.UserActionService;
@@ -56,5 +58,22 @@ public class UserActionController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    // 막걸리 평가 - 좋았어요, 아쉬워요
+    @PostMapping("/evaluateMak")
+    public ResponseEntity<ApiResponseDTO<EvaluateMakResponseDTO>> evaluateMak(
+            @RequestBody EvaluateMakRequestDTO userRequest) {
+
+        EvaluateMakResponseDTO evaluateResults = userActionService.evaluateMak(userRequest);
+
+        ApiResponseDTO<EvaluateMakResponseDTO> response = ApiResponseDTO.<EvaluateMakResponseDTO>builder()
+                .resultCode(HttpStatus.OK.value())
+                .resultMsg(HttpStatus.OK.getReasonPhrase())
+                .result(evaluateResults)
+                .build();
+
+        return ResponseEntity.ok(response);
+
     }
 }
