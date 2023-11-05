@@ -1,4 +1,4 @@
-package com.julook.domain.home.common.dto.response;
+package com.julook.domain.common.dto.response;
 
 import com.julook.global.codes.ErrorCode;
 import lombok.AccessLevel;

@@ -1,9 +1,14 @@
 package com.julook.domain.home.find.repository.impl;
 
+import com.julook.domain.home.find.dto.MakInUserActionDTO;
 import com.julook.domain.home.find.entity.MakInfo;
 import com.julook.domain.home.find.entity.QMakInfo;
 import com.julook.domain.home.find.repository.FindByUserRepositoryCustom;
+import com.julook.domain.user.entity.QComment;
+import com.julook.domain.user.entity.QEvaluateMak;
+import com.julook.domain.user.entity.QWishList;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+import static com.querydsl.core.types.Projections.tuple;
 
 @Repository
 public class FindByUserRepositoryImpl implements FindByUserRepositoryCustom {

@@ -1,7 +1,7 @@
 package com.julook.domain.home.find.service.impl;
 
 import com.julook.domain.home.find.dto.MakInfoDTO;
-import com.julook.domain.home.find.dto.PageableInfoDTO;
+import com.julook.domain.common.dto.PageableInfoDTO;
 import com.julook.domain.home.find.dto.response.FindByUserResponseDTO;
 import com.julook.domain.home.find.entity.MakInfo;
 import com.julook.domain.home.find.repository.FindByUserRepository;

@@ -4,12 +4,26 @@ package com.julook.global.config;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@OpenAPIDefinition(info = @Info(title = "Julook Makgeolli API", description = "주룩 막걸리 API 목록입니다.", version = "1.0"))
-@Configuration
+@OpenAPIDefinition(
+        info = @Info(title = "Julook App", version = "v1"))
 @RequiredArgsConstructor
-@EnableSwagger2
+@Configuration
 public class SwaggerConfig {
+
+    @Bean
+    public GroupedOpenApi Api(){
+        String[] paths = {"/api/**"};
+
+        return GroupedOpenApi.builder()
+                .group("Julook OPEN API v1")
+                .pathsToMatch(paths)
+                .build();
+    }
+
 }
+
+

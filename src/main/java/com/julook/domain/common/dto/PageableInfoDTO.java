@@ -1,4 +1,4 @@
-package com.julook.domain.home.find.dto;
+package com.julook.domain.common.dto;
 
 import lombok.*;
 

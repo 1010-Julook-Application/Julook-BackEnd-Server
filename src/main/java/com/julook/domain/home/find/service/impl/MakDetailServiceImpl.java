@@ -1,6 +1,9 @@
 package com.julook.domain.home.find.service.impl;
 
+import com.julook.domain.home.find.dto.MakInUserActionDTO;
+import com.julook.domain.home.find.dto.MakInfoWithUserActionDTO;
 import com.julook.domain.home.find.dto.response.MakDetailResponseDTO;
+import com.julook.domain.home.find.dto.response.MakLikesAndCommentsDTO;
 import com.julook.domain.home.find.entity.MakInfo;
 import com.julook.domain.home.find.repository.MakDetailRepository;
 import com.julook.domain.home.find.service.MakDetailService;
@@ -23,14 +26,13 @@ public class MakDetailServiceImpl implements MakDetailService {
     }
 
     @Override
-    public MakDetailResponseDTO getMakDetailInfo(int makNumber) {
-        // MakDetailRepository를 사용하여 데이터 검색
-        MakInfo makInfo = makDetailRepository.getMakDetailInfo(makNumber);
+    public MakDetailResponseDTO getMakDetailInfo(int makNumber, long userId) {
+        MakInfoWithUserActionDTO makWithUser = makDetailRepository.getMakDetailInfo(makNumber, userId);
 
         // "makAwards" 값을 컴마(,)로 분리하여 리스트에 추가
         List<String> awards = new ArrayList<>();
-        if (makInfo.getMakAwards() != null) {
-            String[] awardParts = makInfo.getMakAwards().split(",");
+        if (makWithUser.getMakInfo().getMakAwards() != null) {
+            String[] awardParts = makWithUser.getMakInfo().getMakAwards().split(",");
             for (String award : awardParts) {
                 String trimmedAward = award.trim();
                 if (!trimmedAward.isEmpty()) {
@@ -39,7 +41,13 @@ public class MakDetailServiceImpl implements MakDetailService {
             }
         }
 
-        return createMakDetailResponseDTO(makInfo, awards);
+        return createMakDetailResponseDTO(makWithUser.getMakInfo(), awards, makWithUser.getUserAction());
+    }
+
+    @Override
+    public MakLikesAndCommentsDTO getMakLikesAndComments(int makNumber) {
+        MakLikesAndCommentsDTO makLikesAndComment = makDetailRepository.getMakLikesAndComments(makNumber);
+        return makLikesAndComment;
     }
 
     private MakDetailResponseDTO.MainDetail createMainDetail(MakInfo makInfo) {
@@ -67,7 +75,7 @@ public class MakDetailServiceImpl implements MakDetailService {
                 .build();
     }
 
-    private MakDetailResponseDTO createMakDetailResponseDTO(MakInfo makInfo, List<String> awards) {
+    private MakDetailResponseDTO createMakDetailResponseDTO(MakInfo makInfo, List<String> awards, MakInUserActionDTO makInUser) {
         List<MakDetailResponseDTO.MainDetail> mainDetails = Collections.singletonList(createMainDetail(makInfo));
         List<MakDetailResponseDTO.Taste> tastes = Collections.singletonList(createTaste(makInfo));
         List<MakDetailResponseDTO.BreweryInfo> breweryInfoList = Collections.singletonList(createBreweryInfo(makInfo));
@@ -77,6 +85,7 @@ public class MakDetailServiceImpl implements MakDetailService {
                 .makType(makInfo.getMakType())
                 .makName(makInfo.getMakName())
                 .makImageNumber(makInfo.getMakImageNumber())
+                .userAction(makInUser)
                 .attributes(Collections.singletonList(
                         MakDetailResponseDTO.Attribute.builder()
                                 .mainDetail(mainDetails)
