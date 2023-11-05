@@ -28,7 +28,7 @@ public class EvaluateMak {
     private Long evaluateUserId;
 
     @Column(name = "mak_id")
-    private int evaluateMakId;
+    private Long evaluateMakId;
 
     @Column(name = "mev_like_yn")
     private Character userLikedMak;

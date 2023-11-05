@@ -1,5 +1,6 @@
 package com.julook.domain.home.find.dto.response;
 
+import com.julook.domain.home.find.dto.MakInUserActionDTO;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class MakDetailResponseDTO {
     private String makType;
     private String makName;
     private String makImageNumber;
+    private MakInUserActionDTO userAction;
     private List<Attribute> attributes;
 
     @Getter

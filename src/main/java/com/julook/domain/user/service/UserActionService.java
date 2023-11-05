@@ -6,7 +6,9 @@ import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.CommentResponseDTO;
 import com.julook.domain.user.dto.response.EvaluateMakResponseDTO;
 import com.julook.domain.user.dto.response.UserActionResponseDTO;
+import com.julook.domain.user.dto.response.UserMakFolderResponseDTO;
 import com.julook.domain.user.entity.User;
+import org.springframework.data.domain.Pageable;
 
 public interface UserActionService {
     // 찜 추가
@@ -26,4 +28,7 @@ public interface UserActionService {
 
     // 코멘트 삭제 - delete
     UserActionResponseDTO deleteUserComment(CommentRequestDTO userRequest);
+
+    // 사용자 찜 막걸리 조회 - select
+    UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable);
 }

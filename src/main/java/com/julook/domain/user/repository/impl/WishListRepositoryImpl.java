@@ -43,7 +43,7 @@ public class WishListRepositoryImpl implements WishListRepositoryCustom {
                 .set(qWishList.isUserDeleteWishMak, 'Y')
                 .where(
                 qWishList.wishUserId.eq(userRequest.getUserId())
-                        .and(qWishList.wishMakId.eq(userRequest.getMakNumber())))
+                        .and(qWishList.wishMakId.eq((long) userRequest.getMakNumber())))
                 .execute();
 
         return affectedRows > 0;

@@ -25,7 +25,7 @@ public class WishList {
     private UUID wishListId;
 
     @Column(name = "mak_id")
-    private int wishMakId;
+    private long wishMakId;
 
     @Column(name = "usr_id")
     private Long wishUserId;

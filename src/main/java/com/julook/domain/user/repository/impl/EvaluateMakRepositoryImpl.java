@@ -50,7 +50,7 @@ public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
                 .set(qEvaluateMak.updateDate, currentDateTime)
                 .where(
                         qEvaluateMak.evaluateUserId.eq(userRequest.getUserId())
-                                .and(qEvaluateMak.evaluateMakId.eq(userRequest.getMakNumber())))
+                                .and(qEvaluateMak.evaluateMakId.eq((long) userRequest.getMakNumber())))
                 .execute();
 
         return affectedRows > 0;
@@ -62,7 +62,7 @@ public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
         EvaluateMak affectedRows = jpaQueryFactory
                 .selectFrom(qEvaluateMak)
                 .where(qEvaluateMak.evaluateUserId.eq(userRequest.getUserId()).and(
-                        qEvaluateMak.evaluateMakId.eq(userRequest.getMakNumber())))
+                        qEvaluateMak.evaluateMakId.eq((long) userRequest.getMakNumber())))
                 .fetchOne();
 
         return affectedRows != null;

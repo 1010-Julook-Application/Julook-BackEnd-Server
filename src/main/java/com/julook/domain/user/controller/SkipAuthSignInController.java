@@ -42,7 +42,6 @@ public class SkipAuthSignInController {
                 .build();
 
         return ResponseEntity.ok(response);
-
     }
 
 }

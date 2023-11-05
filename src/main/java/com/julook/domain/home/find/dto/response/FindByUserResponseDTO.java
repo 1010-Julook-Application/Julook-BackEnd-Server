@@ -1,7 +1,8 @@
 package com.julook.domain.home.find.dto.response;
 
+import com.julook.domain.home.find.dto.MakInUserActionDTO;
 import com.julook.domain.home.find.dto.MakInfoDTO;
-import com.julook.domain.home.find.dto.PageableInfoDTO;
+import com.julook.domain.common.dto.PageableInfoDTO;
 import lombok.*;
 
 import java.util.List;

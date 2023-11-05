@@ -1,18 +1,29 @@
 package com.julook.domain.user.service.impl;
 
+import com.julook.domain.common.dto.PageableInfoDTO;
+import com.julook.domain.home.find.dto.MakInfoDTO;
+import com.julook.domain.home.find.entity.MakInfo;
+import com.julook.domain.user.dto.MakCellInfoDTO;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.CommentResponseDTO;
 import com.julook.domain.user.dto.response.UserActionResponseDTO;
+import com.julook.domain.user.dto.response.UserMakFolderResponseDTO;
 import com.julook.domain.user.entity.Comment;
+import com.julook.domain.user.entity.UserMakFolder;
 import com.julook.domain.user.repository.CommentRepository;
 import com.julook.domain.user.repository.EvaluateMakRepository;
+import com.julook.domain.user.repository.UserMakFolderRepository;
 import com.julook.domain.user.repository.WishListRepository;
 import com.julook.domain.user.service.UserActionService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,12 +31,14 @@ public class UserActionServiceImpl implements UserActionService {
     private final WishListRepository wishListRepository;
     private final EvaluateMakRepository evaluateMakRepository;
     private final CommentRepository commentRepository;
+    private final UserMakFolderRepository userMakFolderRepository;
     private final ModelMapper modelMapper;
 
-    public UserActionServiceImpl(WishListRepository wishListRepository, EvaluateMakRepository evaluateMakRepository, CommentRepository commentRepository, ModelMapper modelMapper) {
+    public UserActionServiceImpl(WishListRepository wishListRepository, EvaluateMakRepository evaluateMakRepository, CommentRepository commentRepository, UserMakFolderRepository userMakFolderRepository, ModelMapper modelMapper) {
         this.wishListRepository = wishListRepository;
         this.evaluateMakRepository = evaluateMakRepository;
         this.commentRepository = commentRepository;
+        this.userMakFolderRepository = userMakFolderRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -196,4 +209,45 @@ public class UserActionServiceImpl implements UserActionService {
         }
         return  responseDTO;
     }
+
+    @Override
+    public UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable) {
+        Slice<UserMakFolder> folderResults = userMakFolderRepository.getUserMakFolder(userId, segmentName, lastMakNum, pageable);
+        int nextCursor = folderResults.isEmpty() ? 0 : folderResults.getContent()
+                .get(folderResults.getNumberOfElements() - 1).getMakSeq();
+
+        List<MakCellInfoDTO> makCellResults = new ArrayList<>();
+        for (UserMakFolder userMakFolder : folderResults.getContent()) {
+            System.out.println("Mak Number: " + userMakFolder.getMakSeq());
+            System.out.println("Mak Name: " + userMakFolder.getMakNm());
+            System.out.println("Mak Image: " + userMakFolder.getMakImg());
+            MakCellInfoDTO makCellInfoDTO = new MakCellInfoDTO();
+            makCellInfoDTO.setMakNumber(userMakFolder.getMakSeq());
+            makCellInfoDTO.setMakName(userMakFolder.getMakNm());
+            makCellInfoDTO.setMakImage(userMakFolder.getMakImg());
+            makCellResults.add(makCellInfoDTO);
+        }
+
+        PageableInfoDTO pageInfo = new PageableInfoDTO();
+        pageInfo.setCurrentPage(pageInfo.getCurrentPage());
+        pageInfo.setSize(pageInfo.getSize());
+        pageInfo.setFirst(pageInfo.isFirst());
+        pageInfo.setLast(!folderResults.hasNext());
+        pageInfo.setTotalMakElements(pageInfo.getTotalMakElements()); // 전체 막걸리 엘리먼트 수 설정
+        pageInfo.setTotalPages(pageInfo.getTotalPages()); // 전체 페이지 수 설정
+
+
+        UserMakFolderResponseDTO responseDTO = UserMakFolderResponseDTO.builder()
+                .userId(userId.toString())
+                .totalCounts(0)
+                .nextCursor(0)
+                .makInfo(makCellResults)
+                .pageInfo(pageInfo)
+                .build();
+
+        return responseDTO;
+
+    }
+
+
 }

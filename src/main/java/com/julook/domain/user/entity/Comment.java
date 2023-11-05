@@ -31,7 +31,7 @@ public class Comment {
     private Long commentUserId;
 
     @Column(name = "mak_id")
-    private int commentMakId;
+    private Long commentMakId;
 
     @Column(name = "cm_content")
     private String contents;

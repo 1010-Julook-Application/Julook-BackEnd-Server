@@ -37,7 +37,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
             UUID commentId = UUID.randomUUID(); // 새 UUID 생성
             comment.setCommentId(commentId);
             comment.setCommentUserId(userRequest.getUserId());
-            comment.setCommentMakId(userRequest.getMakNumber());
+            comment.setCommentMakId((long) userRequest.getMakNumber());
             comment.setContents(userRequest.getContents());
             comment.setIsVisible(userRequest.getIsVisible());
 
