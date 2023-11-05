@@ -3,6 +3,7 @@ package com.julook.domain.home.find.service.impl;
 import com.julook.domain.home.find.dto.MakInUserActionDTO;
 import com.julook.domain.home.find.dto.MakInfoWithUserActionDTO;
 import com.julook.domain.home.find.dto.response.MakDetailResponseDTO;
+import com.julook.domain.home.find.dto.response.MakLikesAndCommentsDTO;
 import com.julook.domain.home.find.entity.MakInfo;
 import com.julook.domain.home.find.repository.MakDetailRepository;
 import com.julook.domain.home.find.service.MakDetailService;
@@ -42,6 +43,13 @@ public class MakDetailServiceImpl implements MakDetailService {
 
         return createMakDetailResponseDTO(makWithUser.getMakInfo(), awards, makWithUser.getUserAction());
     }
+
+    @Override
+    public MakLikesAndCommentsDTO getMakLikesAndComments(int makNumber) {
+        MakLikesAndCommentsDTO makLikesAndComment = makDetailRepository.getMakLikesAndComments(makNumber);
+        return makLikesAndComment;
+    }
+
     private MakDetailResponseDTO.MainDetail createMainDetail(MakInfo makInfo) {
         return MakDetailResponseDTO.MainDetail.builder()
                 .makAlcoholPercentage(makInfo.getMakAlcoholPercentage())

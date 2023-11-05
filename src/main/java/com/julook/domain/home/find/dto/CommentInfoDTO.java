@@ -2,6 +2,8 @@ package com.julook.domain.home.find.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -9,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CommentInfoDTO {
     private String userNickName;
-    private String userLikeOrNot;
-    private String writeDate;
+    private Character userLikeOrNot;
+    private String contents;
+    private LocalDateTime writeDate;
 }

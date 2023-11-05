@@ -1,10 +1,7 @@
 package com.julook.domain.user.entity;
 
 import com.querydsl.core.annotations.Immutable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,12 +11,9 @@ import java.time.LocalDateTime;
 @Immutable
 @Data
 @Table(name = "user_mak_folder")
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserMakFolder {
-    @Id
     private Long usrId;
-
+    @Id
     private int makSeq;
     private String makNm;
     private String makImg;
@@ -29,5 +23,4 @@ public class UserMakFolder {
     private LocalDateTime reactionLikeDate;
     private LocalDateTime reactionWishDate;
     private LocalDateTime reactionCommentDate;
-
 }

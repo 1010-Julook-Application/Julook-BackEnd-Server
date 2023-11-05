@@ -39,8 +39,17 @@ public class MakDetailController {
 
     @GetMapping("/makLikesAndComments")
     public ResponseEntity<ApiResponseDTO<MakLikesAndCommentsDTO>> getMakLikesAndComments(
-            @RequestParam(value = "MakNumber") int makSeq) {
-        return null;
+            @RequestParam(value = "makNumber") int makSeq) {
+
+        MakLikesAndCommentsDTO makResults = makDetailService.getMakLikesAndComments(makSeq);
+
+        ApiResponseDTO<MakLikesAndCommentsDTO> response = ApiResponseDTO.<MakLikesAndCommentsDTO>builder()
+                .status(HttpStatus.OK.value())
+                .resultMsg(HttpStatus.OK.getReasonPhrase())
+                .result(makResults)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
 }
