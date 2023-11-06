@@ -1,7 +1,6 @@
 package com.julook.domain.user.controller;
 
 import com.julook.domain.common.dto.response.ApiResponseDTO;
-import com.julook.domain.home.find.dto.response.FindByUserResponseDTO;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
@@ -9,10 +8,8 @@ import com.julook.domain.user.dto.response.CommentResponseDTO;
 import com.julook.domain.user.dto.response.UserActionResponseDTO;
 import com.julook.domain.user.dto.response.UserMakFolderResponseDTO;
 import com.julook.domain.user.service.UserActionService;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
