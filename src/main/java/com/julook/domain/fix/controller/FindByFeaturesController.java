@@ -1,9 +1,9 @@
-package com.julook.domain.home.controller;
+package com.julook.domain.fix.controller;
 
 import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.fix.dto.FindByDTO;
+import com.julook.domain.fix.service.FindByFeaturesService;
 import com.julook.domain.home.dto.MakInfoDTO;
-import com.julook.domain.home.service.FindByUserService;
 import com.julook.domain.home.dto.response.FindByUserResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,17 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/makInfo")
-public class FindByUserController {
-    private final FindByUserService findByUserService;
+@RequestMapping("/api/v1/fix")
+public class FindByFeaturesController {
+    private final FindByFeaturesService findByFeaturesService;
 
     @Autowired
-    public FindByUserController(FindByUserService findByUserService) {
-        this.findByUserService = findByUserService;
+    public FindByFeaturesController(FindByFeaturesService findByFeaturesService) {
+        this.findByFeaturesService = findByFeaturesService;
     }
 
     @GetMapping("/findByFeatures")
-    public ResponseEntity<ApiResponseDTO<FindByUserResponseDTO>> getAllMaks(
+    public ResponseEntity<ApiResponseDTO<FindByDTO>> getAllMaks(
             @RequestParam(value = "sort", defaultValue = "makSeq") String sort,
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(value = "offset", defaultValue = "0") int offset,
@@ -44,13 +44,13 @@ public class FindByUserController {
             categories = new ArrayList<>();
         }
 
-        Page<MakInfoDTO> allMaks = findByUserService.findMakWithPaginationAndSorting(offset, pageable.getPageSize(), sort, categories);
-        FindByUserResponseDTO results = FindByUserResponseDTO.builder()
-                .recordCounts(allMaks.getTotalElements())
-                .makInfo(allMaks)
+        Page<MakInfoDTO> allMaks = findByFeaturesService.findMakWithPaginationAndSorting(offset, pageable.getPageSize(), sort, categories);
+        FindByDTO results = FindByDTO.builder()
+                .recordCount(allMaks.getNumberOfElements())
+                .makInfoDTO(allMaks)
                 .build();
 
-        ApiResponseDTO<FindByUserResponseDTO> response = ApiResponseDTO.<FindByUserResponseDTO>builder()
+        ApiResponseDTO<FindByDTO> response = ApiResponseDTO.<FindByDTO>builder()
                 .status(HttpStatus.OK.value())
                 .resultMsg(HttpStatus.OK.getReasonPhrase())
                 .result(results)
