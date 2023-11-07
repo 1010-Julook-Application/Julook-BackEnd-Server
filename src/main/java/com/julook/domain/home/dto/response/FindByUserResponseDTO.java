@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class FindByUserResponseDTO {
     private List<MakInfoDTO> contents;
-    private int totalCount;
-    private int nextCursor;
+    private long totalCount;
+    private long nextCursor;
     private List<PageableInfoDTO> pageInfo;
 
     public static FindByUserResponseDTO res(List<MakInfoDTO> contents, int totalCount, int nextCursor, List<PageableInfoDTO> pageInfo) {

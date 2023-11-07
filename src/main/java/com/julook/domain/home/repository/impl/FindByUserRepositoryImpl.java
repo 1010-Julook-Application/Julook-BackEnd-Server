@@ -6,7 +6,7 @@ import com.julook.domain.home.repository.FindByUserRepositoryCustom;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class FindByUserRepositoryImpl implements FindByUserRepositoryCustom {
     }
 
     @Override
-    public List<MakInfo> findByPreferences(Long lastMakNum, List<String> categories, String sort, Pageable pageable) {
+    public Page<MakInfo> findByPreferences(Long lastMakNum, List<String> categories, String sort, Pageable pageable) {
         //마지막 막걸리 번호를 기준으로 페이지네이션 적용
         BooleanExpression lastMakNumExpression = qMakInfo.makSeq.lt(lastMakNum);
 
@@ -43,11 +43,14 @@ public class FindByUserRepositoryImpl implements FindByUserRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return results;
+        int resultCount = results.size();
+
+        return checkLastPage(pageable, results, resultCount);
     }
 //    private BooleanExpression ltLastMakNum(Long lastMakNum) {
 //        if (lastMakNum == null) {
-//            lastMakNum = 30000L;
+//            lastMakNum = 39453242L;
+////            return null;
 //        }
 //
 //        return qMakInfo.makSeq.lt(lastMakNum);
@@ -100,6 +103,19 @@ public class FindByUserRepositoryImpl implements FindByUserRepositoryCustom {
             return qMakInfo.makAlcoholPercentage.asc();
         }
         return qMakInfo.makSeq.desc(); // 기본값은 추천순
+    }
+
+    private Page<MakInfo> checkLastPage(Pageable pageable, List<MakInfo> results, int resultCounts) {
+
+        boolean hasNext = false;
+
+        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
+        if (results.size() > pageable.getPageSize()) {
+            hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
+
+        return new PageImpl<>(results, pageable, resultCounts);
     }
 
 }

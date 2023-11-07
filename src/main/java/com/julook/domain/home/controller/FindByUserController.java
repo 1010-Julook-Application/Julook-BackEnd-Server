@@ -39,7 +39,7 @@ public class FindByUserController {
             @RequestParam(value = "lastMakNum", defaultValue = "30000") Long lastMakNum,
             @RequestParam(value = "category", required = false) List<String> categories,
             @RequestParam(value = "sort", required = false, defaultValue = "relevance") String sort,
-            @PageableDefault(size = 10, sort = "relevance", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(size = 5, sort = "relevance", direction = Sort.Direction.ASC) Pageable pageable) {
 
         // category가 선택되지 않은 경우 빈 배열 반환
         if (categories == null) {
@@ -54,6 +54,7 @@ public class FindByUserController {
 
         // 서비스 메서드 호출
         FindByUserResponseDTO makInfoList = findByUserService.getMakInfoListByUserPreferences(lastMakNum, categories, sort, pageable);
+
 
         ApiResponseDTO<FindByUserResponseDTO> response = ApiResponseDTO.<FindByUserResponseDTO>builder()
                 .status(HttpStatus.OK.value())

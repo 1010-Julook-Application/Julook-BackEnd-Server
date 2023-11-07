@@ -8,6 +8,7 @@ import com.julook.domain.home.repository.MainInfoRepositoryCustom;
 import com.julook.domain.user.entity.QComment;
 import com.julook.domain.user.entity.QEvaluateMak;
 import com.julook.domain.user.entity.QUser;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -35,7 +36,7 @@ public class MainInfoRepositoryImpl implements MainInfoRepositoryCustom {
             List<MakInfo> results = jpaQueryFactory
                     .selectFrom(qMakInfo)
                     .orderBy(qMakInfo.makSeq.desc())
-                    .limit(12)   // 일단 12개만..
+                    .limit(30)   // 일단 12개만..
                     .fetch();
             return results;
 
@@ -75,6 +76,8 @@ public class MainInfoRepositoryImpl implements MainInfoRepositoryCustom {
                     .leftJoin(qComment).on(qMakInfo.makSeq.eq(qComment.commentMakId))
                     .leftJoin(qUser).on(qEvaluateMak.evaluateUserId.eq(qUser.userID))
                     .where(qComment.isVisible.eq('Y').and(qComment.isUserDeleted.isNull()))
+                    .orderBy(qEvaluateMak.updateDate != null ? qEvaluateMak.updateDate.desc() : qEvaluateMak.createDate.desc()) // writeDate 내림차순 정렬
+                    .limit(30)
                     .fetch();
 
             return commentResults;

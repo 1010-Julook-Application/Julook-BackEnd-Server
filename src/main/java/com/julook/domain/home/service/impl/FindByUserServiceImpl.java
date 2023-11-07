@@ -7,7 +7,9 @@ import com.julook.domain.common.entity.MakInfo;
 import com.julook.domain.home.repository.FindByUserRepository;
 import com.julook.domain.home.service.FindByUserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,20 +29,22 @@ public class FindByUserServiceImpl implements FindByUserService {
 
     @Override
     public FindByUserResponseDTO getMakInfoListByUserPreferences(Long lastMakNum, List<String> categories, String sort, Pageable pageable) {
-        List<MakInfo> makInfoList = findByUserRepository.findByPreferences(lastMakNum, categories, sort, pageable);
+        List<MakInfo> makInfoList = findByUserRepository.
+                findAll(Sort.by(Sort.Direction.DESC, sort));
+//                findByPreferences(lastMakNum, categories, sort, pageable);
 
         List<MakInfoDTO> makInfoDTOList = convertToDTOList(makInfoList);
 
-        int totalCount = makInfoList.get(0).getMakSeq().intValue();
-        int nextCursor = makInfoList.isEmpty() ? 0 : makInfoList.get(makInfoList.size() - 1).getMakSeq().intValue();
+        long totalCount = makInfoList.size();
+        long nextCursor = makInfoList.isEmpty() ? 0 : makInfoDTOList.get(makInfoDTOList.size()-1).getMakSeq();
 
         List<PageableInfoDTO> pageData = new ArrayList<>();
         PageableInfoDTO pageInfo = new PageableInfoDTO();
         pageInfo.setCurrentPage(pageable.getPageNumber()+1);
         pageInfo.setSize(pageable.getPageSize());
         pageInfo.setFirst(pageable.getPageNumber() == 0);
-        pageInfo.setLast(makInfoList.size() < pageable.getPageSize());
-        pageInfo.setTotalMakElements(totalCount);
+        pageInfo.setLast(true);
+        pageInfo.setTotalMakElements((int) totalCount);
         pageInfo.setTotalPages((int) Math.ceil((double) totalCount / pageable.getPageSize()+1));
         pageData.add(pageInfo);
 
@@ -68,4 +72,5 @@ public class FindByUserServiceImpl implements FindByUserService {
         }
         return dtoList;
     }
+
 }
