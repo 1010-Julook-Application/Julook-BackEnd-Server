@@ -1,7 +1,6 @@
 package com.julook.domain.home.controller;
 
 import com.julook.domain.common.dto.response.ApiResponseDTO;
-import com.julook.domain.fix.dto.FindByDTO;
 import com.julook.domain.home.dto.MakInfoDTO;
 import com.julook.domain.home.service.FindByUserService;
 import com.julook.domain.home.dto.response.FindByUserResponseDTO;
