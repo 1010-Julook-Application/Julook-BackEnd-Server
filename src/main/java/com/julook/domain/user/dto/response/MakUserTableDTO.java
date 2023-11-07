@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MakUserTableDTO {
-    private Long usrId;
-
     private int makSeq;
     private String makNm;
     private String makImg;
