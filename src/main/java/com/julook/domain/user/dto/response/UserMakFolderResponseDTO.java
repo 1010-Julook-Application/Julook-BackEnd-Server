@@ -3,7 +3,9 @@ package com.julook.domain.user.dto.response;
 import com.julook.domain.common.dto.PageableInfoDTO;
 import com.julook.domain.user.dto.MakCellInfoDTO;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -13,9 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserMakFolderResponseDTO {
-    private String userId;
-    private List<MakCellInfoDTO> makInfo;
-    private int totalCounts;
-    private int nextCursor;
-    private PageableInfoDTO pageInfo;
+    private Long userId;
+    private Page<MakUserTableDTO> makUserTable;
 }

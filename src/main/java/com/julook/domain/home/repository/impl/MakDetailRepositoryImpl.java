@@ -15,10 +15,15 @@ import com.julook.domain.user.entity.QWishList;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -85,9 +90,87 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
         return result;
     }
 
+//    @Override
+//    public MakLikesAndCommentsDTO getMakLikesAndComments(int makNumber) {
+//        // 쿼리 실행
+//        Tuple eResults = jpaQueryFactory
+//                .select(
+//                        e.count(),
+//                        e.userLikedMak.when('Y').then(1).otherwise(0).sum(),
+//                        e.userLikedMak.when('N').then(1).otherwise(0).sum()
+//                )
+//                .from(e)
+//                .where(e.evaluateMakId.eq((long) makNumber))
+//                .fetchOne();
+//
+//
+//        EvaluateInfoDTO evaluateResults = EvaluateInfoDTO.builder()
+//                .totalEvaluateCounts(Math.toIntExact(eResults.get(0, Long.class)))
+//                .likeCounts(Math.toIntExact(eResults.get(1, Integer.class)))
+//                .dislikeCounts(Math.toIntExact(eResults.get(2, Integer.class)))
+//                .build();
+//
+//
+//        List<CommentInfoDTO> commentInfo = jpaQueryFactory
+//                .select(
+//                        Projections.bean(
+//                                CommentInfoDTO.class,
+//                                u.userNickName,// 사용자 닉네임
+//                                e.userLikedMak.as("userLikeOrNot"), // 좋아요/싫어요 여부
+//                                c.contents, // 댓글 내용
+//                                Expressions.cases()
+//                                        .when(e.updateDate.isNotNull()).then(e.updateDate)
+//                                        .otherwise(e.createDate)
+//                                        .as("writeDate")// 댓글 날짜
+//                        )
+//                )
+//                .from(qMakInfo)
+//                .leftJoin(e).on(qMakInfo.makSeq.eq(e.evaluateMakId))
+//                .leftJoin(c).on(qMakInfo.makSeq.eq(c.commentMakId))
+//                .leftJoin(u).on(e.evaluateUserId.eq(u.userID))
+//                .where(
+//                        qMakInfo.makSeq.eq((long) makNumber), // 막걸리 ID
+//                        c.isUserDeleted.isNull(), // 댓글이 삭제되지 않은 경우
+//                        c.isVisible.eq('Y') // 댓글이 보이는 경우
+//                )
+//                .fetch();
+//
+//
+//        MakLikesAndCommentsDTO results = MakLikesAndCommentsDTO.builder()
+//                .makEvaluateInfo(evaluateResults)
+//                .comments(commentInfo)
+//                .build();
+//
+//        return results;
+//
+//    }
+
     @Override
-    public MakLikesAndCommentsDTO getMakLikesAndComments(int makNumber) {
-        // 쿼리 실행
+    public Page<MakLikesAndCommentsDTO> getMakLikesAndComments(int makNumber, Pageable pageable) {
+        // 댓글 정보를 페이징하여 조회
+        JPQLQuery<CommentInfoDTO> commentQuery = jpaQueryFactory
+                .select(Projections.bean(
+                        CommentInfoDTO.class,
+                        u.userNickName,
+                        e.userLikedMak.as("userLikeOrNot"),
+                        c.contents,
+                        Expressions.cases()
+                                .when(e.updateDate.isNotNull()).then(e.updateDate)
+                                .otherwise(e.createDate).as("writeDate")
+                ))
+                .from(qMakInfo)
+                .leftJoin(e).on(qMakInfo.makSeq.eq(e.evaluateMakId))
+                .leftJoin(c).on(qMakInfo.makSeq.eq(c.commentMakId))
+                .leftJoin(u).on(e.evaluateUserId.eq(u.userID))
+                .where(
+                        qMakInfo.makSeq.eq((long) makNumber),
+                        c.isUserDeleted.isNull(),
+                        c.isVisible.eq('Y')
+                );
+
+        List<CommentInfoDTO> commentInfo = getCommentsPage(commentQuery, pageable).getContent();
+
+        // 평가 정보 조회
         Tuple eResults = jpaQueryFactory
                 .select(
                         e.count(),
@@ -98,45 +181,24 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                 .where(e.evaluateMakId.eq((long) makNumber))
                 .fetchOne();
 
-
         EvaluateInfoDTO evaluateResults = EvaluateInfoDTO.builder()
                 .totalEvaluateCounts(Math.toIntExact(eResults.get(0, Long.class)))
                 .likeCounts(Math.toIntExact(eResults.get(1, Integer.class)))
                 .dislikeCounts(Math.toIntExact(eResults.get(2, Integer.class)))
                 .build();
 
-
-        List<CommentInfoDTO> commentInfo = jpaQueryFactory
-                .select(
-                        Projections.bean(
-                                CommentInfoDTO.class,
-                                u.userNickName,// 사용자 닉네임
-                                e.userLikedMak.as("userLikeOrNot"), // 좋아요/싫어요 여부
-                                c.contents, // 댓글 내용
-                                Expressions.cases()
-                                        .when(e.updateDate.isNotNull()).then(e.updateDate)
-                                        .otherwise(e.createDate)
-                                        .as("writeDate")// 댓글 날짜
-                        )
-                )
-                .from(qMakInfo)
-                .leftJoin(e).on(qMakInfo.makSeq.eq(e.evaluateMakId))
-                .leftJoin(c).on(qMakInfo.makSeq.eq(c.commentMakId))
-                .leftJoin(u).on(e.evaluateUserId.eq(u.userID))
-                .where(
-                        qMakInfo.makSeq.eq((long) makNumber), // 막걸리 ID
-                        c.isUserDeleted.isNull(), // 댓글이 삭제되지 않은 경우
-                        c.isVisible.eq('Y') // 댓글이 보이는 경우
-                )
-                .fetch();
-
-
-        MakLikesAndCommentsDTO results = MakLikesAndCommentsDTO.builder()
+        return new PageImpl<>(Collections.singletonList(MakLikesAndCommentsDTO.builder()
                 .makEvaluateInfo(evaluateResults)
                 .comments(commentInfo)
-                .build();
-
-        return results;
-
+                .build()), pageable, 1);
     }
+
+    private Page<CommentInfoDTO> getCommentsPage(JPQLQuery<CommentInfoDTO> query, Pageable pageable) {
+        List<CommentInfoDTO> results = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        return new PageImpl<>(results, pageable, results.size());
+    }
+
 }

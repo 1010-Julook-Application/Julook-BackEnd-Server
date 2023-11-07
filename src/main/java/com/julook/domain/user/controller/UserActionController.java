@@ -4,11 +4,10 @@ import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
-import com.julook.domain.user.dto.response.CommentResponseDTO;
-import com.julook.domain.user.dto.response.UserActionResponseDTO;
-import com.julook.domain.user.dto.response.UserMakFolderResponseDTO;
+import com.julook.domain.user.dto.response.*;
 import com.julook.domain.user.service.UserActionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -74,8 +73,9 @@ public class UserActionController {
                 .build();
 
         return ResponseEntity.ok(response);
-
     }
+
+
 
     // 코멘트 작성 - Insert
     @PostMapping("/insertComment")
@@ -125,25 +125,31 @@ public class UserActionController {
         return ResponseEntity.ok(response);
     }
 
-
     // 사용자 찜 폴더 조회 - select
     @GetMapping("/getUserMakFolder")
     public ResponseEntity<ApiResponseDTO<UserMakFolderResponseDTO>> getUserMakFolder(
             @RequestParam(value = "userId") Long userId,
-            @RequestParam(value = "segmentName", defaultValue = "entire") String category,
-            @RequestParam(value = "lastMakNum", defaultValue = "300000") int lastMakNum,
-            @PageableDefault(size = 10) Pageable pageable) {
+            @RequestParam(value = "segmentName", defaultValue = "entire") String segmentName,
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(value = "offset", defaultValue = "0") int offset ) {
+
+            Page<MakUserTableDTO> userFolderResults = userActionService.getUserMakFolder(userId, segmentName, offset, pageable.getPageSize());
+
+            UserMakFolderResponseDTO userResults = UserMakFolderResponseDTO.builder()
+                    .userId(userId)
+                    .makUserTable(userFolderResults)
+                    .build();
 
 
-        UserMakFolderResponseDTO userFolderResponse = userActionService.getUserMakFolder(userId, category, lastMakNum, pageable);
+            ApiResponseDTO<UserMakFolderResponseDTO> response = ApiResponseDTO.<UserMakFolderResponseDTO>builder()
+                    .status(HttpStatus.OK.value())
+                    .resultMsg(HttpStatus.OK.getReasonPhrase())
+                    .result(userResults)
+                    .build();
 
-        ApiResponseDTO<UserMakFolderResponseDTO> response = ApiResponseDTO.<UserMakFolderResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .resultMsg(HttpStatus.OK.getReasonPhrase())
-                .result(userFolderResponse)
-                .build();
+            return ResponseEntity.ok(response);
 
-        return ResponseEntity.ok(response);
+
 
     }
 

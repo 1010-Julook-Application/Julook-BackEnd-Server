@@ -1,33 +1,29 @@
-package com.julook.domain.home.service.impl;
+package com.julook.domain.fix.service;
 
-import com.julook.domain.home.dto.MakInfoDTO;
-import com.julook.domain.common.dto.PageableInfoDTO;
-import com.julook.domain.home.dto.response.FindByUserResponseDTO;
 import com.julook.domain.common.entity.MakInfo;
-import com.julook.domain.home.repository.FindByUserRepository;
-import com.julook.domain.home.service.FindByUserService;
+import com.julook.domain.fix.repository.FindByFeaturesRepository;
+import com.julook.domain.home.dto.MakInfoDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import java.util.function.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FindByUserServiceImpl implements FindByUserService {
-    private final FindByUserRepository findByUserRepository;
+public class FindByFeaturesService {
+    private final FindByFeaturesRepository findByFeaturesRepository;
     private final ModelMapper modelMapper;
-
-
-    public FindByUserServiceImpl(FindByUserRepository findByUserRepository, ModelMapper modelMapper) {
-        this.findByUserRepository = findByUserRepository;
+    @Autowired
+    public FindByFeaturesService(FindByFeaturesRepository findByFeaturesRepository, ModelMapper modelMapper) {
+        this.findByFeaturesRepository = findByFeaturesRepository;
         this.modelMapper = modelMapper;
     }
-
 
     public Page<MakInfoDTO> findMakWithPaginationAndSorting(int offset, int pageSize, String sort, List<String> categories) {
         Sort.Direction condition;
@@ -84,7 +80,7 @@ public class FindByUserServiceImpl implements FindByUserService {
 
 
 
-        Page<MakInfo> result = findByUserRepository.findAll(specifications, PageRequest.of(offset, pageSize).withSort(
+        Page<MakInfo> result = findByFeaturesRepository.findAll(specifications, PageRequest.of(offset, pageSize).withSort(
                 Sort.by(condition, sort)));
 
         Page<MakInfoDTO> makInfoDTOList = result.map(entity -> modelMapper.map(entity, MakInfoDTO.class));
@@ -101,5 +97,4 @@ public class FindByUserServiceImpl implements FindByUserService {
         }
         return dtoList;
     }
-
 }

@@ -1,11 +1,14 @@
 package com.julook.domain.user.service.impl;
 
 import com.julook.domain.common.dto.PageableInfoDTO;
+import com.julook.domain.common.entity.MakInfo;
+import com.julook.domain.home.dto.MakInfoDTO;
 import com.julook.domain.user.dto.MakCellInfoDTO;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.CommentResponseDTO;
+import com.julook.domain.user.dto.response.MakUserTableDTO;
 import com.julook.domain.user.dto.response.UserActionResponseDTO;
 import com.julook.domain.user.dto.response.UserMakFolderResponseDTO;
 import com.julook.domain.user.entity.Comment;
@@ -16,8 +19,8 @@ import com.julook.domain.user.repository.UserMakFolderRepository;
 import com.julook.domain.user.repository.WishListRepository;
 import com.julook.domain.user.service.UserActionService;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -62,7 +65,7 @@ public class UserActionServiceImpl implements UserActionService {
             responseDTO.setMessage("DB INSERT 오류 발생");
             return null;
         }
-        return  responseDTO;
+        return responseDTO;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class UserActionServiceImpl implements UserActionService {
             responseDTO.setMessage("DB UPDATE 오류 발생");
             return null;
         }
-        return  responseDTO;
+        return responseDTO;
     }
 
     @Override
@@ -153,7 +156,7 @@ public class UserActionServiceImpl implements UserActionService {
             commentResponse.setMessage("DB INSERT 오류 발생");
             return null;
         }
-        return  commentResponse;
+        return commentResponse;
     }
 
 
@@ -179,7 +182,7 @@ public class UserActionServiceImpl implements UserActionService {
             responseDTO.setMessage("DB UPDATE 오류 발생");
             return null;
         }
-        return  responseDTO;
+        return responseDTO;
     }
 
 
@@ -205,47 +208,97 @@ public class UserActionServiceImpl implements UserActionService {
             responseDTO.setMessage("DB DELETE 오류 발생");
             return null;
         }
-        return  responseDTO;
+        return responseDTO;
     }
 
     @Override
-    public UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable) {
-        Slice<UserMakFolder> folderResults = userMakFolderRepository.getUserMakFolder(userId, segmentName, lastMakNum, pageable);
-        int nextCursor = folderResults.isEmpty() ? 0 : folderResults.getContent()
-                .get(folderResults.getNumberOfElements() - 1).getMakSeq();
+    public Page<MakUserTableDTO> getUserMakFolder(Long userId, String segmentName, int offset, int pageSize) {
+        Specification<UserMakFolder> specifications = Specification.where((root, query, builder) ->
+                builder.equal(root.get("usrId"), userId));
+        Specification<UserMakFolder> categorySpecification = null;
 
-        List<MakCellInfoDTO> makCellResults = new ArrayList<>();
-        for (UserMakFolder userMakFolder : folderResults.getContent()) {
-            System.out.println("Mak Number: " + userMakFolder.getMakSeq());
-            System.out.println("Mak Name: " + userMakFolder.getMakNm());
-            System.out.println("Mak Image: " + userMakFolder.getMakImg());
-            MakCellInfoDTO makCellInfoDTO = new MakCellInfoDTO();
-            makCellInfoDTO.setMakNumber(userMakFolder.getMakSeq());
-            makCellInfoDTO.setMakName(userMakFolder.getMakNm());
-            makCellInfoDTO.setMakImage(userMakFolder.getMakImg());
-            makCellResults.add(makCellInfoDTO);
+        switch (segmentName) {
+            case "like":
+                categorySpecification = (root, query, builder) ->
+                        builder.equal(root.get("reactionLike"), "LIKE");
+                break;
+            case "dislike":
+                categorySpecification = (root, query, builder) ->
+                        builder.equal(root.get("reactionLike"), "DISLIKE");
+                break;
+            case "wish":
+                categorySpecification = (root, query, builder) ->
+                        builder.equal(root.get("reactionWish"), "WISH");
+                break;
+            case "comment":
+                categorySpecification = (root, query, builder) ->
+                        builder.isNotNull(root.get("reactionComment"));
+                break;
+            default:
+                // 다 선택 안한 경우 조건을 걸지 않음
+                break;
         }
 
-        PageableInfoDTO pageInfo = new PageableInfoDTO();
-        pageInfo.setCurrentPage(pageInfo.getCurrentPage());
-        pageInfo.setSize(pageInfo.getSize());
-        pageInfo.setFirst(pageInfo.isFirst());
-        pageInfo.setLast(!folderResults.hasNext());
-        pageInfo.setTotalMakElements(pageInfo.getTotalMakElements()); // 전체 막걸리 엘리먼트 수 설정
-        pageInfo.setTotalPages(pageInfo.getTotalPages()); // 전체 페이지 수 설정
+        if (categorySpecification != null) {
+            specifications = specifications.and(categorySpecification);
+        }
+
+        specifications = specifications.and((root, query, builder) ->
+                builder.or(
+                                builder.isNotNull(root.get("reactionLike")),
+                                builder.isNotNull(root.get("reactionWish")),
+                                builder.isNotNull(root.get("reactionComment"))
+                        )
+        );
 
 
-        UserMakFolderResponseDTO responseDTO = UserMakFolderResponseDTO.builder()
-                .userId(userId.toString())
-                .totalCounts(0)
-                .nextCursor(0)
-                .makInfo(makCellResults)
-                .pageInfo(pageInfo)
-                .build();
+        Page<UserMakFolder> result = userMakFolderRepository.findAll(specifications,
+                PageRequest.of(offset, pageSize, Sort.by(Sort.Direction.DESC, "reactionCommentDate")));
 
-        return responseDTO;
+        Page<MakUserTableDTO> MakUserTableList = result.map(entity -> modelMapper.map(entity, MakUserTableDTO.class));
 
+        return MakUserTableList;
     }
+
+
+//    @Override
+//    public UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable) {
+//        Slice<UserMakFolder> folderResults = userMakFolderRepository.getUserMakFolder(userId, segmentName, lastMakNum, pageable);
+//        int nextCursor = folderResults.isEmpty() ? 0 : folderResults.getContent()
+//                .get(folderResults.getNumberOfElements() - 1).getMakSeq();
+//
+//        List<MakCellInfoDTO> makCellResults = new ArrayList<>();
+//        for (UserMakFolder userMakFolder : folderResults.getContent()) {
+//            System.out.println("Mak Number: " + userMakFolder.getMakSeq());
+//            System.out.println("Mak Name: " + userMakFolder.getMakNm());
+//            System.out.println("Mak Image: " + userMakFolder.getMakImg());
+//            MakCellInfoDTO makCellInfoDTO = new MakCellInfoDTO();
+//            makCellInfoDTO.setMakNumber(userMakFolder.getMakSeq());
+//            makCellInfoDTO.setMakName(userMakFolder.getMakNm());
+//            makCellInfoDTO.setMakImage(userMakFolder.getMakImg());
+//            makCellResults.add(makCellInfoDTO);
+//        }
+//
+//        PageableInfoDTO pageInfo = new PageableInfoDTO();
+//        pageInfo.setCurrentPage(pageInfo.getCurrentPage());
+//        pageInfo.setSize(pageInfo.getSize());
+//        pageInfo.setFirst(pageInfo.isFirst());
+//        pageInfo.setLast(!folderResults.hasNext());
+//        pageInfo.setTotalMakElements(pageInfo.getTotalMakElements()); // 전체 막걸리 엘리먼트 수 설정
+//        pageInfo.setTotalPages(pageInfo.getTotalPages()); // 전체 페이지 수 설정
+//
+//
+//        UserMakFolderResponseDTO responseDTO = UserMakFolderResponseDTO.builder()
+//                .userId(userId.toString())
+//                .totalCounts(0)
+//                .nextCursor(0)
+//                .makInfo(makCellResults)
+//                .pageInfo(pageInfo)
+//                .build();
+//
+//        return responseDTO;
+//
+//    }
 
 
 }

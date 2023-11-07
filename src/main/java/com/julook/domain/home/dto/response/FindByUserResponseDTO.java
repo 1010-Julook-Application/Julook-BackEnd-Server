@@ -3,6 +3,7 @@ package com.julook.domain.home.dto.response;
 import com.julook.domain.home.dto.MakInfoDTO;
 import com.julook.domain.common.dto.PageableInfoDTO;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -12,17 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FindByUserResponseDTO {
-    private List<MakInfoDTO> contents;
-    private long totalCount;
-    private long nextCursor;
-    private List<PageableInfoDTO> pageInfo;
+    private long recordCounts;
+    private Page<MakInfoDTO> makInfo;
 
-    public static FindByUserResponseDTO res(List<MakInfoDTO> contents, int totalCount, int nextCursor, List<PageableInfoDTO> pageInfo) {
-        return FindByUserResponseDTO.builder()
-                .contents(contents)
-                .totalCount(totalCount)
-                .nextCursor(nextCursor)
-                .pageInfo(pageInfo)
-                .build();
-    }
+//    public static FindByUserResponseDTO res(List<MakInfoDTO> contents, int totalCount, int nextCursor, List<PageableInfoDTO> pageInfo) {
+//        return FindByUserResponseDTO.builder()
+//                .contents(contents)
+//                .totalCount(totalCount)
+//                .nextCursor(nextCursor)
+//                .pageInfo(pageInfo)
+//                .build();
+//    }
 }
