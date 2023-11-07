@@ -44,16 +44,33 @@ public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
     @Transactional
     @Override
     public Boolean updateEvaluateMak(EvaluateMakRequestDTO userRequest) {
-        long affectedRows = jpaQueryFactory
-                .update(qEvaluateMak)
-                .set(qEvaluateMak.userLikedMak, userRequest.getLikeMak())
-                .set(qEvaluateMak.updateDate, currentDateTime)
-                .where(
-                        qEvaluateMak.evaluateUserId.eq(userRequest.getUserId())
-                                .and(qEvaluateMak.evaluateMakId.eq((long) userRequest.getMakNumber())))
-                .execute();
-
-        return affectedRows > 0;
+        System.out.println(userRequest.getLikeMak());
+        long affectedRows;
+        // 만약 likeMak 값이 null이 아니라면, 평가 업데이트 수행
+        if (userRequest.getLikeMak() == 'Y' || userRequest.getLikeMak() == 'N') {
+            affectedRows = jpaQueryFactory
+                    .update(qEvaluateMak)
+                    .set(qEvaluateMak.userLikedMak, userRequest.getLikeMak())
+                    .set(qEvaluateMak.updateDate, currentDateTime)
+                    .where(
+                            qEvaluateMak.evaluateUserId.eq(userRequest.getUserId())
+                                    .and(qEvaluateMak.evaluateMakId.eq((long) userRequest.getMakNumber())))
+                    .execute();
+            return affectedRows > 0;
+        } else if (userRequest.getLikeMak() == 'D'){
+            // likeMak 값이 null인 경우, 평가 초기화
+            affectedRows = jpaQueryFactory
+                    .delete(qEvaluateMak)
+                    .where(
+                            qEvaluateMak.evaluateUserId.eq(userRequest.getUserId())
+                                    .and(qEvaluateMak.evaluateMakId.eq((long) userRequest.getMakNumber()))
+                    )
+                    .execute();
+            return affectedRows > 0;
+        }
+        else {
+            return false;
+        }
     }
 
     // 막걸리 평가 여부 확인
