@@ -15,5 +15,4 @@ import java.util.List;
 public class MakLikesAndCommentsDTO {
     private EvaluateInfoDTO makEvaluateInfo;
     private List<CommentInfoDTO> comments;
-    private PageableInfoDTO pageableInfo;
 }

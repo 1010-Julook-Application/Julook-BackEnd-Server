@@ -8,6 +8,8 @@ import com.julook.domain.common.entity.MakInfo;
 import com.julook.domain.home.repository.MakDetailRepository;
 import com.julook.domain.home.service.MakDetailService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,8 +47,8 @@ public class MakDetailServiceImpl implements MakDetailService {
     }
 
     @Override
-    public MakLikesAndCommentsDTO getMakLikesAndComments(int makNumber) {
-        MakLikesAndCommentsDTO makLikesAndComment = makDetailRepository.getMakLikesAndComments(makNumber);
+    public Page<MakLikesAndCommentsDTO> getMakLikesAndComments(int makNumber, Pageable pageable) {
+        Page<MakLikesAndCommentsDTO> makLikesAndComment = makDetailRepository.getMakLikesAndComments(makNumber, pageable);
         return makLikesAndComment;
     }
 

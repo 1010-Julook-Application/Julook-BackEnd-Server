@@ -5,6 +5,9 @@ import com.julook.domain.home.dto.response.MakDetailResponseDTO;
 import com.julook.domain.home.dto.response.MakLikesAndCommentsDTO;
 import com.julook.domain.home.service.MakDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,12 +41,14 @@ public class MakDetailController {
     }
 
     @GetMapping("/makLikesAndComments")
-    public ResponseEntity<ApiResponseDTO<MakLikesAndCommentsDTO>> getMakLikesAndComments(
-            @RequestParam(value = "makNumber") int makSeq) {
+    public ResponseEntity<ApiResponseDTO<Page<MakLikesAndCommentsDTO>>> getMakLikesAndComments(
+            @RequestParam(value = "makNumber") int makSeq,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
 
-        MakLikesAndCommentsDTO makResults = makDetailService.getMakLikesAndComments(makSeq);
+        Page<MakLikesAndCommentsDTO> makResults = makDetailService.getMakLikesAndComments(makSeq, pageable);
 
-        ApiResponseDTO<MakLikesAndCommentsDTO> response = ApiResponseDTO.<MakLikesAndCommentsDTO>builder()
+        ApiResponseDTO<Page<MakLikesAndCommentsDTO>> response = ApiResponseDTO.<Page<MakLikesAndCommentsDTO>>builder()
                 .status(HttpStatus.OK.value())
                 .resultMsg(HttpStatus.OK.getReasonPhrase())
                 .result(makResults)
