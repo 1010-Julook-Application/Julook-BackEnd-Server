@@ -2,6 +2,7 @@ package com.julook.domain.home.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -17,4 +18,5 @@ public class MakInUserActionDTO {
     private UUID commentId;
     private String commentContents;
     private Character isCommentVisible;
+    private LocalDateTime writeDate;
 }

@@ -63,7 +63,11 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                                         .otherwise("N"),
                                 c.commentId,
                                 c.contents,
-                                c.isVisible
+                                c.isVisible,
+                                Expressions.cases()
+                                        .when(e.updateDate.isNotNull()).then(e.updateDate)
+                                        .otherwise(e.createDate)
+                                        .as("writeDate")
                         )
                 )
                 .from(qMakInfo)
