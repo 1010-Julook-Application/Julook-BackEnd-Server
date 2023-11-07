@@ -124,32 +124,9 @@ public class UserActionController {
         return ResponseEntity.ok(response);
     }
 
-
     // 사용자 찜 폴더 조회 - select
-//    @GetMapping("/getUserMakFolder")
-//    public ResponseEntity<ApiResponseDTO<UserMakFolderResponseDTO>> getUserMakFolder(
-//            @RequestParam(value = "userId") Long userId,
-//            @RequestParam(value = "segmentName", defaultValue = "entire") String category,
-//            @RequestParam(value = "lastMakNum", defaultValue = "300000") int lastMakNum,
-//            @PageableDefault(size = 10) Pageable pageable) {
-//
-//
-//        UserMakFolderResponseDTO userFolderResponse = userActionService.getUserMakFolder(userId, category, lastMakNum, pageable);
-//
-//        ApiResponseDTO<UserMakFolderResponseDTO> response = ApiResponseDTO.<UserMakFolderResponseDTO>builder()
-//                .status(HttpStatus.OK.value())
-//                .resultMsg(HttpStatus.OK.getReasonPhrase())
-//                .result(userFolderResponse)
-//                .build();
-//
-//        return ResponseEntity.ok(response);
-//
-//    }
-
-
-    // 사용자 찜 폴더 조회 - Fixing...
-    @GetMapping("/FixUserMakFolder")
-    public ResponseEntity<ApiResponseDTO<UserMakFolderResponseDTO>> getFixMakFolder(
+    @GetMapping("/getUserMakFolder")
+    public ResponseEntity<ApiResponseDTO<UserMakFolderResponseDTO>> getUserMakFolder(
             @RequestParam(value = "userId") Long userId,
             @RequestParam(value = "segmentName", defaultValue = "entire") String segmentName,
             @PageableDefault(size = 10) Pageable pageable,
