@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -30,13 +33,17 @@ public class WishList {
     @Column(name = "usr_id")
     private Long wishUserId;
 
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "wl_date", columnDefinition = "TIMESTAMP")
-    private Timestamp wishDate;
+    private LocalDateTime wishDate;
 
     @Column(name = "wl_del_yn")
     private Character isUserDeleteWishMak;
 
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "wl_del_date", columnDefinition = "TIMESTAMP")
-    private Timestamp wishDelDate;
+    private LocalDateTime wishDelDate;
 
 }

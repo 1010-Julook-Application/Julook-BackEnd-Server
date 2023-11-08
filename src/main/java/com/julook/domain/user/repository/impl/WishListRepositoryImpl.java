@@ -2,6 +2,8 @@ package com.julook.domain.user.repository.impl;
 
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.entity.QWishList;
+import com.julook.domain.user.entity.User;
+import com.julook.domain.user.entity.WishList;
 import com.julook.domain.user.repository.WishListRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
@@ -24,15 +26,35 @@ public class WishListRepositoryImpl implements WishListRepositoryCustom {
     @Transactional
     @Override
     public Boolean addWishList(WishRequestDTO userRequest) {
-        long affectedRows = jpaQueryFactory.insert(qWishList)
-                .columns(
-                        qWishList.wishMakId, qWishList.wishUserId, qWishList.wishDate,
-                        qWishList.isUserDeleteWishMak
-                ).values(
-                    userRequest.getMakNumber(), userRequest.getUserId(), currentDateTime, 'N'
-                )
-                .execute();
-        return affectedRows > 0;
+        try {
+            WishList results = isAlreadyInWishList(userRequest.getUserId(), (long) userRequest.getMakNumber());
+            long affectedRows = 0;
+            if (results != null) {
+                affectedRows = jpaQueryFactory.update(qWishList)
+                        .set(qWishList.isUserDeleteWishMak, 'N')
+                        .set(qWishList.wishDelDate, (LocalDateTime) null)
+                        .where(
+                                qWishList.wishUserId.eq(userRequest.getUserId())
+                                        .and(qWishList.wishMakId.eq((long) userRequest.getMakNumber())))
+                        .execute();
+            } else {
+                affectedRows = jpaQueryFactory.insert(qWishList)
+                        .columns(
+                                qWishList.wishMakId, qWishList.wishUserId, qWishList.wishDate,
+                                qWishList.isUserDeleteWishMak
+                        ).values(
+                                userRequest.getMakNumber(), userRequest.getUserId(), currentDateTime, 'N'
+                        )
+                        .execute();
+            }
+
+            return affectedRows > 0;
+        } catch (Exception ex) {
+            // 오류 처리 및 로깅
+            ex.printStackTrace();
+            return null;
+
+        }
     }
 
     @Transactional
@@ -41,11 +63,23 @@ public class WishListRepositoryImpl implements WishListRepositoryCustom {
         long affectedRows = jpaQueryFactory
                 .update(qWishList)
                 .set(qWishList.isUserDeleteWishMak, 'Y')
+                .set(qWishList.wishDelDate, currentDateTime)
                 .where(
-                qWishList.wishUserId.eq(userRequest.getUserId())
-                        .and(qWishList.wishMakId.eq((long) userRequest.getMakNumber())))
+                        qWishList.wishUserId.eq(userRequest.getUserId())
+                                .and(qWishList.wishMakId.eq((long) userRequest.getMakNumber())))
                 .execute();
 
         return affectedRows > 0;
     }
+
+    @Override
+    public WishList isAlreadyInWishList(Long userId, Long makNumber) {
+        WishList affectedRows = jpaQueryFactory.selectFrom(qWishList)
+                .where(qWishList.wishUserId.eq(userId).and(qWishList.wishMakId.eq(makNumber)))
+                .fetchOne();
+
+        return affectedRows;
+    }
+
+
 }
