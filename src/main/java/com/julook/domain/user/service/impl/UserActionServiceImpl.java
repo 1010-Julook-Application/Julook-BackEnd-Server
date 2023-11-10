@@ -133,9 +133,9 @@ public class UserActionServiceImpl implements UserActionService {
         String message;
         boolean isSuccess;
         try {
-            UUID commentId = commentRepository.insertUserComment(userRequest);
+            Boolean commentId = commentRepository.insertUserComment(userRequest);
 
-            if (commentId != null) {
+            if (commentId) {
                 isSuccess = true;
                 message = "댓글 달기 성공";
             } else {
@@ -143,7 +143,6 @@ public class UserActionServiceImpl implements UserActionService {
                 message = "댓글 달기 실패";
             }
 
-            commentResponse.setCommentId(commentId);
             commentResponse.setIsSuccess(isSuccess);
             commentResponse.setMessage(message);
 

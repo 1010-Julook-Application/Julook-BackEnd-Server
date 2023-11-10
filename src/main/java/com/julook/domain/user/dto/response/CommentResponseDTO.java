@@ -10,7 +10,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponseDTO {
-    private UUID commentId;
     private Boolean isSuccess;
     private String message;
 }

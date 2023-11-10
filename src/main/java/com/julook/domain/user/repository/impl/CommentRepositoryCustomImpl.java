@@ -30,38 +30,24 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 
     @Transactional
     @Override
-    public UUID insertUserComment(CommentRequestDTO userRequest) {
+    public Boolean insertUserComment(CommentRequestDTO userRequest) {
         try {
-            Comment comment = new Comment();
+            long affectedRows = jpaQueryFactory.insert(qComment)
+                    .columns(
+                            qComment.commentUserId, qComment.commentMakId,
+                            qComment.contents, qComment.isVisible
+                    ).values(
+                            userRequest.getUserId(), userRequest.getMakNumber(),
+                            userRequest.getContents(), userRequest.getIsVisible()
+                    )
+                    .execute();
 
-            UUID commentId = UUID.randomUUID(); // 새 UUID 생성
-            comment.setCommentId(commentId);
-            comment.setCommentUserId(userRequest.getUserId());
-            comment.setCommentMakId((long) userRequest.getMakNumber());
-            comment.setContents(userRequest.getContents());
-            comment.setIsVisible(userRequest.getIsVisible());
-
-            entityManager.persist(comment);
-            entityManager.flush();
-
-            return commentId;
+            return affectedRows > 0;
 
         } catch (Exception ex) {
             // 오류 처리 및 로깅
             ex.printStackTrace();
             return null;
-
-//        long affectedRows = jpaQueryFactory.insert(qComment)
-//                .columns(
-//                        qComment.commentUserId, qComment.commentMakId,
-//                        qComment.contents, qComment.isVisible
-//                ).values(
-//                        userRequest.getUserId(), userRequest.getMakNumber(),
-//                        userRequest.getContents(), userRequest.getIsVisible()
-//                )
-//                .execute();
-//
-//        return affectedRows > 0;
         }
     }
 
@@ -73,7 +59,8 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
                 .set(qComment.contents, userRequest.getContents())
                 .set(qComment.isVisible, userRequest.getIsVisible())
                 .set(qComment.updateDate, currentDateTime)
-                .where(qComment.commentId.eq(userRequest.getCommentId()))
+                .where(qComment.commentUserId.eq(userRequest.getUserId()).and(
+                        qComment.commentMakId.eq((long) userRequest.getMakNumber())))
                 .execute();
         return affectedRows > 0;
     }
@@ -82,10 +69,9 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     @Override
     public Boolean deleteUserComment(CommentRequestDTO userRequest) {
         long affectedRows = jpaQueryFactory
-                .update(qComment)
-                .set(qComment.isUserDeleted, userRequest.getIsUserDeleteComment())
-                .set(qComment.deleteDate, currentDateTime)
-                .where(qComment.commentId.eq(userRequest.getCommentId()))
+                .delete(qComment)
+                .where(qComment.commentUserId.eq(userRequest.getUserId()).and(
+                        qComment.commentMakId.eq((long) userRequest.getMakNumber())))
                 .execute();
         return affectedRows > 0;
     }
