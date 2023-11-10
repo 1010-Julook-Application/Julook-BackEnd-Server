@@ -15,7 +15,6 @@ public class MakInUserActionDTO {
     private String isUserEvaluate;
     private String userEvaluateValue;
     private String isInMyComment;
-    private UUID commentId;
     private String commentContents;
     private Character isCommentVisible;
     private LocalDateTime writeDate;

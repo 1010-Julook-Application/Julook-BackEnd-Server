@@ -54,19 +54,18 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                         Projections.constructor(
                                 MakInUserActionDTO.class,
                                 Expressions.cases()
-                                        .when(w.wishUserId.isNotNull().and(w.isUserDeleteWishMak.isNull())).then("Y")
-                                        .otherwise("N"),
+                                        .when(w.wishUserId.isNotNull().and(w.isUserDeleteWishMak.eq('N'))).then("Y")
+                                        .otherwise("N").as("isAddedInUserWishList"),
                                 Expressions.cases()
                                         .when(e.evaluateId.isNotNull()).then("Y")
-                                        .otherwise("N"),
+                                        .otherwise("N").as("isUserEvaluate"),
                                 Expressions.cases()
                                         .when(e.userLikedMak.eq('Y')).then("LIKE")
                                         .when(e.userLikedMak.eq('N')).then("DISLIKE")
-                                        .otherwise("null"),
+                                        .otherwise("null").as("userEvaluateValue"),
                                 Expressions.cases()
                                         .when(c.commentId.isNotNull()).then("Y")
-                                        .otherwise("N"),
-                                c.commentId,
+                                        .otherwise("N").as("isInMyComment"),
                                 c.contents,
                                 c.isVisible,
                                 Expressions.cases()
