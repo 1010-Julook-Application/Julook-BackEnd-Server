@@ -8,7 +8,6 @@ import com.julook.domain.home.repository.MainInfoRepositoryCustom;
 import com.julook.domain.user.entity.QComment;
 import com.julook.domain.user.entity.QEvaluateMak;
 import com.julook.domain.user.entity.QUser;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;

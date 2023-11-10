@@ -1,7 +1,6 @@
 package com.julook.domain.user.repository.impl;
 
 import com.julook.domain.user.dto.request.CommentRequestDTO;
-import com.julook.domain.user.entity.Comment;
 import com.julook.domain.user.entity.QComment;
 import com.julook.domain.user.repository.CommentRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Repository
 public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
