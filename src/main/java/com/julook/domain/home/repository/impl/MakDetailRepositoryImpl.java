@@ -14,6 +14,7 @@ import com.julook.domain.user.entity.QUser;
 import com.julook.domain.user.entity.QWishList;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -69,8 +70,8 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                                 c.contents,
                                 c.isVisible,
                                 Expressions.cases()
-                                        .when(e.updateDate.isNotNull()).then(e.updateDate)
-                                        .otherwise(e.createDate)
+                                        .when(c.updateDate.isNotNull()).then(c.updateDate)
+                                        .otherwise(c.createDate)
                                         .as("writeDate")
                         )
                 )
@@ -150,23 +151,28 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
         JPQLQuery<CommentInfoDTO> commentQuery = jpaQueryFactory
                 .select(Projections.bean(
                         CommentInfoDTO.class,
-                        u.userNickName,
+                        u.userNickName.as("userNickName"),
                         e.userLikedMak.as("userLikeOrNot"),
-                        c.contents,
-                        Expressions.cases()
-                                .when(e.updateDate.isNotNull()).then(e.updateDate)
-                                .otherwise(e.createDate).as("writeDate")
+                        c.contents.as("contents"),
+                        new CaseBuilder()
+                                .when(c.updateDate.isNotNull()).then(c.updateDate)
+                                .otherwise(c.createDate)
+                                .as("writeDate")
                 ))
                 .from(qMakInfo)
-                .leftJoin(e).on(qMakInfo.makSeq.eq(e.evaluateMakId))
                 .leftJoin(c).on(qMakInfo.makSeq.eq(c.commentMakId))
-                .leftJoin(u).on(e.evaluateUserId.eq(u.userID))
+                .leftJoin(u).on(c.commentUserId.eq(u.userID))
+                .leftJoin(e).on(qMakInfo.makSeq.eq(e.evaluateMakId).and(c.commentUserId.eq(e.evaluateUserId)))
                 .where(
-                        qMakInfo.makSeq.eq((long) makNumber),
-                        c.isVisible.eq('Y')
+
+                        c.isVisible.eq('Y'),
+                        qMakInfo.makSeq.eq((long) makNumber)
                 );
 
+
+
         List<CommentInfoDTO> commentInfo = getCommentsPage(commentQuery, pageable).getContent();
+
 
         // 평가 정보 조회
         Tuple eResults = jpaQueryFactory
