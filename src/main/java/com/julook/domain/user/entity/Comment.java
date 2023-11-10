@@ -22,9 +22,7 @@ public class Comment {
     @Column(name = "cm_seq")
     private int commentSeq;
 
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "cm_id", columnDefinition = "BINARY(16)")
+    @Column(name = "cm_id", columnDefinition = "uuid")
     private UUID commentId;
 
     @Column(name = "usr_id")
@@ -48,13 +46,5 @@ public class Comment {
     @Column(name = "cm_update_date")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateDate;
-
-    @Column(name = "cm_del_yn")
-    private Character isUserDeleted;
-
-    @CreatedDate
-    @Column(name = "cm_delete_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime deleteDate;
 
 }

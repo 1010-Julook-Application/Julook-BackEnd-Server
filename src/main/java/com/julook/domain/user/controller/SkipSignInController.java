@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
-public class SkipAuthSignInController {
+public class SkipSignInController {
     // 서비스 선언
     private final SkipAuthSignInService skipAuthSignInService;
 
     @Autowired
-    public SkipAuthSignInController(SkipAuthSignInService skipAuthSignInService) {
+    public SkipSignInController(SkipAuthSignInService skipAuthSignInService) {
         this.skipAuthSignInService = skipAuthSignInService;
     }
 

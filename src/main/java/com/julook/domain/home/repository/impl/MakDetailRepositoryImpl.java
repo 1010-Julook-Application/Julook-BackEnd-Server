@@ -64,7 +64,7 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                                         .when(e.userLikedMak.eq('N')).then("DISLIKE")
                                         .otherwise("null"),
                                 Expressions.cases()
-                                        .when(c.commentId.isNotNull().and(c.isUserDeleted.isNull())).then("Y")
+                                        .when(c.commentId.isNotNull()).then("Y")
                                         .otherwise("N"),
                                 c.commentId,
                                 c.contents,
@@ -164,7 +164,6 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                 .leftJoin(u).on(e.evaluateUserId.eq(u.userID))
                 .where(
                         qMakInfo.makSeq.eq((long) makNumber),
-                        c.isUserDeleted.isNull(),
                         c.isVisible.eq('Y')
                 );
 
