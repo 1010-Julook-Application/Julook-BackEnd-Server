@@ -108,8 +108,10 @@ public class UserActionServiceImpl implements UserActionService {
             } else {
                 isSuccess = evaluateMakRepository.updateEvaluateMak(userRequest);
 
-                if (isSuccess) {
+                if (isSuccess & userRequest.getLikeMak() != 'D') {
                     message = "막걸리 평가 업데이트 성공";
+                } else if (isSuccess & userRequest.getLikeMak() == 'D' ){
+                    message = "막걸리 평가 삭제 성공";
                 } else {
                     message = "막걸리 평가 업데이트 실패";
                 }
