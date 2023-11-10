@@ -46,7 +46,7 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
         // 쿼리 실행
         MakInfo makInfoResults = jpaQueryFactory
                 .selectFrom(qMakInfo)
-                .where(qMakInfo.makSeq.eq((long)makNumber))
+                .where(qMakInfo.makSeq.eq((long) makNumber))
                 .fetchOne();
 
         MakInUserActionDTO userActionResults = jpaQueryFactory
@@ -180,11 +180,16 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                 .where(e.evaluateMakId.eq((long) makNumber))
                 .fetchOne();
 
+        Long totalEvaluateCounts = eResults.get(0, Long.class);
+        Integer likeCounts = eResults.get(1, Integer.class);
+        Integer dislikeCounts = eResults.get(2, Integer.class);
+
         EvaluateInfoDTO evaluateResults = EvaluateInfoDTO.builder()
-                .totalEvaluateCounts(Math.toIntExact(eResults.get(0, Long.class)))
-                .likeCounts(Math.toIntExact(eResults.get(1, Integer.class)))
-                .dislikeCounts(Math.toIntExact(eResults.get(2, Integer.class)))
+                .totalEvaluateCounts(totalEvaluateCounts != null ? Math.toIntExact(totalEvaluateCounts) : 0)
+                .likeCounts(likeCounts != null ? likeCounts : 0)
+                .dislikeCounts(dislikeCounts != null ? dislikeCounts : 0)
                 .build();
+
 
         return new PageImpl<>(Collections.singletonList(MakLikesAndCommentsDTO.builder()
                 .makEvaluateInfo(evaluateResults)
