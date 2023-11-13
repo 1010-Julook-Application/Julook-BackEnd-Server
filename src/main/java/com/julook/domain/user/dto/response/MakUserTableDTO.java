@@ -14,6 +14,7 @@ public class MakUserTableDTO {
     private String makNm;
     private String makImg;
     private String reactionLike;
+    private Character cmVisibility;
     private String reactionWish;
     private String reactionComment;
     private LocalDateTime reactionLikeDate;

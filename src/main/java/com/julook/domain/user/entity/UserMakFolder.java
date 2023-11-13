@@ -20,6 +20,7 @@ public class UserMakFolder {
     private String reactionLike;
     private String reactionWish;
     private String reactionComment;
+    private Character cmVisibility;
     private LocalDateTime reactionLikeDate;
     private LocalDateTime reactionWishDate;
     private LocalDateTime reactionCommentDate;
