@@ -166,8 +166,10 @@ public class MakDetailRepositoryImpl implements MakDetailRepositoryCustom {
                 .where(
 
                         c.isVisible.eq('Y'),
-                        qMakInfo.makSeq.eq((long) makNumber)
-                );
+                        qMakInfo.makSeq.eq((long) makNumber))
+                .orderBy(new CaseBuilder()
+                        .when(c.updateDate.isNotNull()).then(c.updateDate)
+                        .otherwise(c.createDate).desc());
 
 
 
