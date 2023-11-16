@@ -56,7 +56,7 @@ public class MainInfoRepositoryImpl implements MainInfoRepositoryCustom {
                             Projections.bean(
                                     RecentCommentsResponseDTO.class,
                                     qMakInfo.makSeq.as("makNumber"),
-                                    qMakInfo.makName,
+                                    qMakInfo.makName.as("makName"),
                                     qMakInfo.makImageNumber,
                                     Projections.bean(
                                             CommentInfoDTO.class,
@@ -64,16 +64,16 @@ public class MainInfoRepositoryImpl implements MainInfoRepositoryCustom {
                                             qEvaluateMak.userLikedMak.as("userLikeOrNot"),
                                             qComment.contents.as("contents"),
                                             Expressions.cases()
-                                                    .when(qEvaluateMak.updateDate.isNotNull()).then(qEvaluateMak.updateDate)
-                                                    .otherwise(qEvaluateMak.createDate)
+                                                    .when(qComment.updateDate.isNotNull()).then(qComment.updateDate)
+                                                    .otherwise(qComment.createDate)
                                                     .as("writeDate")
                                     ).as("commentInfo")
                             )
                     )
                     .from(qMakInfo)
-                    .leftJoin(qEvaluateMak).on(qMakInfo.makSeq.eq(qEvaluateMak.evaluateMakId))
                     .leftJoin(qComment).on(qMakInfo.makSeq.eq(qComment.commentMakId))
-                    .leftJoin(qUser).on(qEvaluateMak.evaluateUserId.eq(qUser.userID))
+                    .leftJoin(qUser).on(qComment.commentUserId.eq(qUser.userID))
+                    .leftJoin(qEvaluateMak).on(qMakInfo.makSeq.eq(qEvaluateMak.evaluateMakId).and(qComment.commentUserId.eq(qEvaluateMak.evaluateUserId)))
                     .where(qComment.isVisible.eq('Y'))
                     .orderBy(qEvaluateMak.updateDate != null ? qEvaluateMak.updateDate.desc() : qEvaluateMak.createDate.desc()) // writeDate 내림차순 정렬
                     .limit(30)
