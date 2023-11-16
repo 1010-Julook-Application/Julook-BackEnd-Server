@@ -3,6 +3,8 @@ package com.julook.domain.user.repository.impl;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.entity.QComment;
 import com.julook.domain.user.repository.CommentRepositoryCustom;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

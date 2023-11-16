@@ -15,11 +15,13 @@ import com.julook.domain.user.repository.EvaluateMakRepository;
 import com.julook.domain.user.repository.UserMakFolderRepository;
 import com.julook.domain.user.repository.WishListRepository;
 import com.julook.domain.user.service.UserActionService;
+import com.querydsl.core.types.OrderSpecifier;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -213,26 +215,34 @@ public class UserActionServiceImpl implements UserActionService {
         Specification<UserMakFolder> specifications = Specification.where((root, query, builder) ->
                 builder.equal(root.get("usrId"), userId));
         Specification<UserMakFolder> categorySpecification = null;
+        List<Sort.Order> orders = new ArrayList<>();
 
         switch (segmentName) {
             case "like":
                 categorySpecification = (root, query, builder) ->
                         builder.equal(root.get("reactionLike"), "LIKE");
+                orders.add(Sort.Order.desc("reactionLikeDate"));
                 break;
             case "dislike":
                 categorySpecification = (root, query, builder) ->
                         builder.equal(root.get("reactionLike"), "DISLIKE");
+                orders.add(Sort.Order.desc("reactionLikeDate"));
                 break;
             case "wish":
                 categorySpecification = (root, query, builder) ->
                         builder.equal(root.get("reactionWish"), "WISH");
+                orders.add(Sort.Order.desc("reactionWishDate"));
                 break;
             case "comment":
                 categorySpecification = (root, query, builder) ->
                         builder.isNotNull(root.get("reactionComment"));
+                orders.add(Sort.Order.desc("reactionCommentDate"));
                 break;
             default:
                 // 다 선택 안한 경우 조건을 걸지 않음
+                orders.add(Sort.Order.desc("reactionLikeDate"));
+                orders.add(Sort.Order.desc("reactionWishDate"));
+                orders.add(Sort.Order.desc("reactionCommentDate"));
                 break;
         }
 
@@ -250,7 +260,7 @@ public class UserActionServiceImpl implements UserActionService {
 
 
         Page<UserMakFolder> result = userMakFolderRepository.findAll(specifications,
-                PageRequest.of(offset, pageSize, Sort.by(Sort.Direction.DESC, "reactionCommentDate")));
+                PageRequest.of(offset, pageSize, Sort.by(orders)));
 
         Page<MakUserTableDTO> MakUserTableList = result.map(entity -> modelMapper.map(entity, MakUserTableDTO.class));
 

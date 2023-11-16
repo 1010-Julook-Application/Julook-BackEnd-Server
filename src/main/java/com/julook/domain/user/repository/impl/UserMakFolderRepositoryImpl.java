@@ -3,6 +3,8 @@ package com.julook.domain.user.repository.impl;
 import com.julook.domain.user.entity.QUserMakFolder;
 import com.julook.domain.user.entity.UserMakFolder;
 import com.julook.domain.user.repository.UserMakFolderRepositoryCustom;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -30,16 +33,36 @@ public class UserMakFolderRepositoryImpl implements UserMakFolderRepositoryCusto
         //마지막 막걸리 번호를 기준으로 페이지네이션 적용
 //        BooleanExpression lastMakNumExpression = qUserMakFolder.makSeq.lt(lastMakNum);
 
-        // 쿼리
+        System.out.println(segmentName);
+
+        OrderSpecifier<LocalDateTime> segmentOrderSpecifier;
+
+        switch (segmentName) {
+            case "like":
+                segmentOrderSpecifier = qUserMakFolder.reactionLikeDate.desc();
+                break;
+            case "dislike":
+                segmentOrderSpecifier = qUserMakFolder.reactionLikeDate.desc();
+                break;
+            case "wish":
+                segmentOrderSpecifier = qUserMakFolder.reactionWishDate.desc();
+                break;
+            case "comment":
+                segmentOrderSpecifier = qUserMakFolder.reactionCommentDate.desc();
+                break;
+            default: // "entire" or any other case
+                segmentOrderSpecifier = Expressions.asComparable(
+                        qUserMakFolder.reactionLikeDate.coalesce(qUserMakFolder.reactionWishDate.coalesce(qUserMakFolder.reactionCommentDate, qUserMakFolder.reactionLikeDate))
+                ).desc().nullsLast();
+                break;
+        }
+
 
         List<UserMakFolder> results = jpaQueryFactory.selectFrom(qUserMakFolder)
                 .where(qUserMakFolder.usrId.eq(userId))
+                .orderBy(segmentOrderSpecifier)
                 .fetch();
 
-        System.out.println(results.get(0).getMakNm());
-        System.out.println(results.get(1).getMakNm());
-        System.out.println(results.get(2).getMakNm());
-        System.out.println(results.get(3).getMakNm());
 
         return checkLastPage(pageable, results);
     }

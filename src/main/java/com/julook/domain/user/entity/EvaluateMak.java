@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class EvaluateMak {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createDate;
 
-    @CreatedDate
+    @LastModifiedDate
     @Column(name = "mev_update_date")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateDate;

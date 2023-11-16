@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -42,9 +43,8 @@ public class Comment {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createDate;
 
-    @CreatedDate
+    @LastModifiedDate
     @Column(name = "cm_update_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateDate;
 
 }

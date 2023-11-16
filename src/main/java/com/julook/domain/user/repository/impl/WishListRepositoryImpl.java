@@ -40,10 +40,10 @@ public class WishListRepositoryImpl implements WishListRepositoryCustom {
             } else {
                 affectedRows = jpaQueryFactory.insert(qWishList)
                         .columns(
-                                qWishList.wishMakId, qWishList.wishUserId, qWishList.wishDate,
+                                qWishList.wishMakId, qWishList.wishUserId,
                                 qWishList.isUserDeleteWishMak
                         ).values(
-                                userRequest.getMakNumber(), userRequest.getUserId(), currentDateTime, 'N'
+                                userRequest.getMakNumber(), userRequest.getUserId(), 'N'
                         )
                         .execute();
             }
