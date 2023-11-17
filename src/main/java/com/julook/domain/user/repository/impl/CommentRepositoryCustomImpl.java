@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Repository
@@ -21,7 +22,6 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     private EntityManager entityManager;
 
     private QComment qComment = QComment.comment;
-    LocalDateTime currentDateTime = LocalDateTime.now();
 
     @Autowired
     public CommentRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory) {
@@ -54,6 +54,8 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     @Transactional
     @Override
     public Boolean updateUserComment(CommentRequestDTO userRequest) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
         long affectedRows = jpaQueryFactory
                 .update(qComment)
                 .set(qComment.contents, userRequest.getContents())

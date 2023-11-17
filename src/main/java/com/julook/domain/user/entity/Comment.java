@@ -47,6 +47,7 @@ public class Comment {
 
     @LastModifiedDate
     @Column(name = "cm_update_date")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateDate;
 
 }

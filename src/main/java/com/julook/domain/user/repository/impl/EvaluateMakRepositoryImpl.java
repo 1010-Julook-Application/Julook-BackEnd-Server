@@ -16,7 +16,6 @@ public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
     private
     QEvaluateMak qEvaluateMak = QEvaluateMak.evaluateMak;
-    LocalDateTime currentDateTime = LocalDateTime.now();
 
     @Autowired
     public EvaluateMakRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
@@ -44,7 +43,7 @@ public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
     @Transactional
     @Override
     public Boolean updateEvaluateMak(EvaluateMakRequestDTO userRequest) {
-        System.out.println(userRequest.getLikeMak());
+        LocalDateTime currentDateTime = LocalDateTime.now();
         long affectedRows;
         // 만약 likeMak 값이 null이 아니라면, 평가 업데이트 수행
         if (userRequest.getLikeMak() == 'Y' || userRequest.getLikeMak() == 'N') {

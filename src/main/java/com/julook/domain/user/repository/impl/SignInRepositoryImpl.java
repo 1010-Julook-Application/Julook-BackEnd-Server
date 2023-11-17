@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class SignInRepositoryImpl implements SignInRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
     private QUser qUser = QUser.user;
-    LocalDateTime currentDateTime = LocalDateTime.now();
 
     @Autowired
     public SignInRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
@@ -31,6 +30,7 @@ public class SignInRepositoryImpl implements SignInRepositoryCustom {
     @Transactional
     @Override
     public Boolean setUserInfo(Long userId, String nickName, String gender, String ageGroup) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
         long affectedRows = jpaQueryFactory.insert(qUser)
                 .columns(
                         qUser.userID, qUser.userNickName, qUser.userSex, qUser.userAgeRange,

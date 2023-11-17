@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 public class WishListRepositoryImpl implements WishListRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
     private QWishList qWishList = QWishList.wishList;
-    LocalDateTime currentDateTime = LocalDateTime.now();
 
     @Autowired
     public WishListRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
@@ -60,6 +59,7 @@ public class WishListRepositoryImpl implements WishListRepositoryCustom {
     @Transactional
     @Override
     public Boolean deleteWishList(WishRequestDTO userRequest) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
         long affectedRows = jpaQueryFactory
                 .update(qWishList)
                 .set(qWishList.isUserDeleteWishMak, 'Y')
