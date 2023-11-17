@@ -75,7 +75,10 @@ public class MainInfoRepositoryImpl implements MainInfoRepositoryCustom {
                     .leftJoin(qUser).on(qComment.commentUserId.eq(qUser.userID))
                     .leftJoin(qEvaluateMak).on(qMakInfo.makSeq.eq(qEvaluateMak.evaluateMakId).and(qComment.commentUserId.eq(qEvaluateMak.evaluateUserId)))
                     .where(qComment.isVisible.eq('Y'))
-                    .orderBy(qComment.updateDate != null ? qComment.updateDate.desc() : qComment.createDate.desc()) // writeDate 내림차순 정렬
+                    .orderBy(Expressions.cases()
+                            .when(qComment.updateDate.isNotNull()).then(qComment.updateDate)
+                            .otherwise(qComment.createDate)
+                            .desc())  // writeDate 내림차순 정렬
                     .limit(30)
                     .fetch();
 

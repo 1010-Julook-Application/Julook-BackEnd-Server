@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class EvaluateMak {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +36,7 @@ public class EvaluateMak {
     @Column(name = "mev_like_yn")
     private Character userLikedMak;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(name = "mev_create_date", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createDate;

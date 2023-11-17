@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +40,7 @@ public class Comment {
     @Column(name = "cm_visible_yn")
     private Character isVisible;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(name = "cm_create_date", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createDate;
