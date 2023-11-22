@@ -3,7 +3,7 @@ package com.julook.domain.user.service.impl;
 import com.julook.domain.user.dto.response.SkipSignInResponseDTO;
 import com.julook.domain.user.entity.User;
 import com.julook.domain.user.repository.SignInRepository;
-import com.julook.domain.user.service.SkipAuthSignInService;
+import com.julook.domain.user.service.SignInService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-public class SkipAuthSignInServiceImpl implements SkipAuthSignInService {
+public class SignInServiceImpl implements SignInService {
     private final SignInRepository skipAuthSignInRepository;
     private final ModelMapper modelMapper;
     @Autowired
-    public SkipAuthSignInServiceImpl(SignInRepository skipAuthSignInRepository, ModelMapper modelMapper) {
+    public SignInServiceImpl(SignInRepository skipAuthSignInRepository, ModelMapper modelMapper) {
         this.skipAuthSignInRepository = skipAuthSignInRepository;
         this.modelMapper = modelMapper;
     }

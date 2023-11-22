@@ -3,7 +3,7 @@ package com.julook.domain.user.controller;
 import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.user.dto.request.SkipSignInRequestDTO;
 import com.julook.domain.user.dto.response.SkipSignInResponseDTO;
-import com.julook.domain.user.service.SkipAuthSignInService;
+import com.julook.domain.user.service.SignInService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
-public class SkipSignInController {
+public class SignInController {
     // 서비스 선언
-    private final SkipAuthSignInService skipAuthSignInService;
+    private final SignInService skipAuthSignInService;
 
     @Autowired
-    public SkipSignInController(SkipAuthSignInService skipAuthSignInService) {
+    public SignInController(SignInService skipAuthSignInService) {
         this.skipAuthSignInService = skipAuthSignInService;
     }
 
