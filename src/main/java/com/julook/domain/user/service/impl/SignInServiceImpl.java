@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Random;
 
 @Service
@@ -76,7 +77,13 @@ public class SignInServiceImpl implements SignInService {
                     return null;
                 }
 
-                responseDTO = modelMapper.map(user, SignInResponseDTO.class);
+                responseDTO = SignInResponseDTO.SkipSignIn(
+                        user.getUserID(),
+                        user.getUserNickName(),
+                        user.getUserSex(),
+                        user.getUserAgeRange(),
+                        user.getIsUserVerified(),
+                        String.valueOf(user.getUserJoinDate()));
             }
 
         } catch (Exception ex) {

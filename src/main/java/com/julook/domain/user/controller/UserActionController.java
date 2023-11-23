@@ -137,9 +137,11 @@ public class UserActionController {
             @RequestParam(value = "offset", defaultValue = "0") int offset ) {
 
             Page<MakUserTableDTO> userFolderResults = userActionService.getUserMakFolder(userId, segmentName, offset, pageable.getPageSize());
+            Long totalMak = userActionService.getTotalMak();
 
             UserMakFolderResponseDTO userResults = UserMakFolderResponseDTO.builder()
                     .userId(userId)
+                    .totalMakCount(totalMak)
                     .makUserTable(userFolderResults)
                     .build();
 
@@ -156,35 +158,4 @@ public class UserActionController {
 
     }
 
-    // 사용자 닉네임 수정
-    @PostMapping("/modifyUserNickname")
-    public ResponseEntity<ApiResponseDTO<ModifyNickResponseDTO>> modifyUserNickName(
-            @RequestBody ModifyNickRequestDTO userRequest) {
-        ModifyNickResponseDTO modifiedResults = userActionService.modifiyUserNickname(userRequest);
-
-        ApiResponseDTO<ModifyNickResponseDTO> response = ApiResponseDTO.<ModifyNickResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .resultMsg(HttpStatus.OK.getReasonPhrase())
-                .result(modifiedResults)
-                .build();
-
-        return ResponseEntity.ok(response);
-    }
-
-
-    // 사용자 탈퇴
-    @PostMapping("/deleteUserAccount")
-    public ResponseEntity<ApiResponseDTO<DeleteUserResponseDTO>> deleteUserAccount(
-            @RequestBody Map<String, Long> requestBody) {
-        Long userId = requestBody.get("userId");
-        DeleteUserResponseDTO deleteResults = userActionService.deleteUserAccount(userId);
-
-        ApiResponseDTO<DeleteUserResponseDTO> response = ApiResponseDTO.<DeleteUserResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .resultMsg(HttpStatus.OK.getReasonPhrase())
-                .result(deleteResults)
-                .build();
-
-        return ResponseEntity.ok(response);
-    }
 }

@@ -1,5 +1,6 @@
 package com.julook.domain.user.service.impl;
 
+import com.julook.domain.home.repository.FindByUserRepository;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
 import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
@@ -27,7 +28,7 @@ public class UserActionServiceImpl implements UserActionService {
     private final EvaluateMakRepository evaluateMakRepository;
     private final CommentRepository commentRepository;
     private final UserMakFolderRepository userMakFolderRepository;
-    private final ProfileRepository profileRepository;
+    private final UserMakFolderRepositoryCustom userMakFolderRepositoryCustom;
     private final ModelMapper modelMapper;
 
     @Override
@@ -256,51 +257,7 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public ModifyNickResponseDTO modifiyUserNickname(ModifyNickRequestDTO userRequest) {
-        ModifyNickResponseDTO responseDTO = new ModifyNickResponseDTO();
-        try{
-            Boolean isSuccess = profileRepository.modifyUserNickname(userRequest);
-            if(isSuccess) {
-                responseDTO.setIsSuccess(true);
-                responseDTO.setMessage("닉네임 수정 성공");
-                responseDTO.setUserId(userRequest.getUserId());
-                responseDTO.setModifiedNick(userRequest.getModifyNickname());
-            } else {
-                responseDTO.setIsSuccess(false);
-                responseDTO.setMessage("닉네임 수정 실패");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            responseDTO.setIsSuccess(false);
-            responseDTO.setMessage("DB UPDATE 오류 발생" + ex.getMessage());
-            return null;
-        }
-        return responseDTO;
-    }
-
-    @Override
-    public DeleteUserResponseDTO deleteUserAccount(Long userId) {
-        DeleteUserResponseDTO responseDTO = new DeleteUserResponseDTO();
-        String message;
-        try {
-            Boolean isSuccess = profileRepository.deleteUserAccount(userId);
-            if(isSuccess) {
-                message = "계정 삭제 완료";
-                responseDTO.setUserId(userId.toString());
-                responseDTO.setWithdrawDate(LocalDate.now());
-
-            } else{
-                message = "계정 삭제 실패 - 요청 바람.";
-            }
-
-            responseDTO.setIsSuccess(isSuccess);
-            responseDTO.setMessage(message);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            responseDTO.setIsSuccess(false);
-            responseDTO.setMessage("DB UPDATE 오류 발생" + ex.getMessage());
-            return null;
-        }
-        return responseDTO;
+    public Long getTotalMak() {
+        return userMakFolderRepositoryCustom.getTotalMak();
     }
 }

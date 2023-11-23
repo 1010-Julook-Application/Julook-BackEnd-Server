@@ -35,12 +35,7 @@ public interface UserActionService {
 //    UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable);
     Page<MakUserTableDTO> getUserMakFolder(Long userId, String segmentName, int offset, int pageSize);
 
-
-    // 사용자 닉네임 수정 - update
-    ModifyNickResponseDTO modifiyUserNickname(ModifyNickRequestDTO userRequest);
-
-    // 사용자 탈퇴
-    DeleteUserResponseDTO deleteUserAccount(Long userId);
-
+    // 전체 막걸리 개수
+    Long getTotalMak();
 
 }
