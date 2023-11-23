@@ -33,8 +33,6 @@ public class UserMakFolderRepositoryImpl implements UserMakFolderRepositoryCusto
         //마지막 막걸리 번호를 기준으로 페이지네이션 적용
 //        BooleanExpression lastMakNumExpression = qUserMakFolder.makSeq.lt(lastMakNum);
 
-        System.out.println(segmentName);
-
         OrderSpecifier<LocalDateTime> segmentOrderSpecifier;
 
         switch (segmentName) {

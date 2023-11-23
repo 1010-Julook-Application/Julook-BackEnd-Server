@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @Repository
 public class EvaluateMakRepositoryImpl implements EvaluateMakRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
-    private
-    QEvaluateMak qEvaluateMak = QEvaluateMak.evaluateMak;
+    private QEvaluateMak qEvaluateMak = QEvaluateMak.evaluateMak;
 
     @Autowired
     public EvaluateMakRepositoryImpl(JPAQueryFactory jpaQueryFactory) {

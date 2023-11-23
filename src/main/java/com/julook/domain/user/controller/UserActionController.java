@@ -3,6 +3,7 @@ package com.julook.domain.user.controller;
 import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
+import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.*;
 import com.julook.domain.user.service.UserActionService;
@@ -13,6 +14,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -153,5 +156,35 @@ public class UserActionController {
 
     }
 
+    // 사용자 닉네임 수정
+    @PostMapping("/modifyUserNickname")
+    public ResponseEntity<ApiResponseDTO<ModifyNickResponseDTO>> modifyUserNickName(
+            @RequestBody ModifyNickRequestDTO userRequest) {
+        ModifyNickResponseDTO modifiedResults = userActionService.modifiyUserNickname(userRequest);
 
+        ApiResponseDTO<ModifyNickResponseDTO> response = ApiResponseDTO.<ModifyNickResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .resultMsg(HttpStatus.OK.getReasonPhrase())
+                .result(modifiedResults)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    // 사용자 탈퇴
+    @PostMapping("/deleteUserAccount")
+    public ResponseEntity<ApiResponseDTO<DeleteUserResponseDTO>> deleteUserAccount(
+            @RequestBody Map<String, Long> requestBody) {
+        Long userId = requestBody.get("userId");
+        DeleteUserResponseDTO deleteResults = userActionService.deleteUserAccount(userId);
+
+        ApiResponseDTO<DeleteUserResponseDTO> response = ApiResponseDTO.<DeleteUserResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .resultMsg(HttpStatus.OK.getReasonPhrase())
+                .result(deleteResults)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }

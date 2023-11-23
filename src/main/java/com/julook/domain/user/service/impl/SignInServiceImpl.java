@@ -1,6 +1,8 @@
 package com.julook.domain.user.service.impl;
 
-import com.julook.domain.user.dto.response.SkipSignInResponseDTO;
+import com.julook.domain.user.dto.request.PhoneSignInRequestDTO;
+import com.julook.domain.user.dto.response.SignInResponseDTO;
+import com.julook.domain.user.dto.response.UserActionResponseDTO;
 import com.julook.domain.user.entity.User;
 import com.julook.domain.user.repository.SignInRepository;
 import com.julook.domain.user.service.SignInService;
@@ -12,18 +14,38 @@ import java.util.Random;
 
 @Service
 public class SignInServiceImpl implements SignInService {
-    private final SignInRepository skipAuthSignInRepository;
+    private final SignInRepository signInRepository;
     private final ModelMapper modelMapper;
     @Autowired
     public SignInServiceImpl(SignInRepository skipAuthSignInRepository, ModelMapper modelMapper) {
-        this.skipAuthSignInRepository = skipAuthSignInRepository;
+        this.signInRepository = skipAuthSignInRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
     public Boolean isUserIdDuplicate(Long userID) {
-        User user = skipAuthSignInRepository.findByUserID(userID);
+        User user = signInRepository.findByUserID(userID);
         return user != null;
+    }
+
+    @Override
+    public UserActionResponseDTO isUserNickNameDuplicate(String nickName) {
+        int nickSize = signInRepository.findByUserNickName(nickName);
+        boolean isSuccess;
+        String message;
+
+        if(nickSize > 0) {
+            isSuccess = false;
+            message = "중복된 닉네임 입니다.";
+        }else {
+            isSuccess = true;
+            message = "사용 가능한 닉네임 입니다.";
+        }
+
+        return UserActionResponseDTO.builder()
+                .isSuccess(isSuccess)
+                .message(message)
+                .build();
     }
 
     @Override
@@ -42,21 +64,52 @@ public class SignInServiceImpl implements SignInService {
     }
 
     @Override
-    public SkipSignInResponseDTO registerUserResults(Long userId, String nickName, String gender, String ageGroup) {
-        SkipSignInResponseDTO responseDTO = new SkipSignInResponseDTO();
+    public SignInResponseDTO registerUserResults(Long userId, String nickName, String gender, String ageGroup) {
+        SignInResponseDTO responseDTO = new SignInResponseDTO();
         try {
-            Boolean isUserSaved = skipAuthSignInRepository.setUserInfo(userId,nickName,gender,ageGroup);
+            Boolean isUserSaved = signInRepository.setUserInfo(userId,nickName,gender,ageGroup);
 
             if (isUserSaved) {
-                User user = skipAuthSignInRepository.findByUserID(userId);
+                User user = signInRepository.findByUserID(userId);
 
                 if (user == null){
                     return null;
                 }
-                responseDTO = modelMapper.map(user, SkipSignInResponseDTO.class);
+
+                responseDTO = modelMapper.map(user, SignInResponseDTO.class);
             }
 
         } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return  responseDTO;
+    }
+
+    @Override
+    public SignInResponseDTO registerWithPhoneUserResults(Long userId, PhoneSignInRequestDTO userRequest) {
+        SignInResponseDTO responseDTO = new SignInResponseDTO();
+        try {
+            Boolean isUserSaved = signInRepository.setUserInfoWithPhone(userId, userRequest);
+
+            if(isUserSaved) {
+                User user = signInRepository.findByUserID(userId);
+
+                if(user == null) {
+                    return null;
+                }
+
+                responseDTO = SignInResponseDTO.phoneSignIn(
+                        user.getUserID(),
+                        user.getUserNickName(),
+                        user.getUserPhoneSuffix(),
+                        user.getUserBirth(),
+                        user.getUserSex(),
+                        user.getIsUserVerified(),
+                        String.valueOf(user.getUserJoinDate()));
+            }
+
+        }catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }

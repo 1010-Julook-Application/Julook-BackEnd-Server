@@ -2,6 +2,7 @@ package com.julook.domain.user.service;
 
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
+import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.*;
 import com.julook.domain.user.entity.User;
@@ -33,6 +34,13 @@ public interface UserActionService {
     // 사용자 찜 막걸리 조회 - select
 //    UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable);
     Page<MakUserTableDTO> getUserMakFolder(Long userId, String segmentName, int offset, int pageSize);
+
+
+    // 사용자 닉네임 수정 - update
+    ModifyNickResponseDTO modifiyUserNickname(ModifyNickRequestDTO userRequest);
+
+    // 사용자 탈퇴
+    DeleteUserResponseDTO deleteUserAccount(Long userId);
 
 
 }
