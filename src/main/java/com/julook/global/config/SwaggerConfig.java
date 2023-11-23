@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(title = "Julook App", version = "v1"))
+        info = @Info(title = "Julook App", version = "v2"))
 @RequiredArgsConstructor
 @Configuration
 public class SwaggerConfig {
