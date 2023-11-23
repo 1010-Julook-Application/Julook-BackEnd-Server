@@ -24,7 +24,7 @@ public class SmsServiceImpl implements SmsService {
 
     @Override
     public void sendSms(SMSRequestDTO userRequest) {
-        String to = userRequest.getPhone();
+        String to = userRequest.getPhone().replace("-","");
         String certificationNumber = makeRandomNumber();
 
         System.out.println(certificationNumber);
