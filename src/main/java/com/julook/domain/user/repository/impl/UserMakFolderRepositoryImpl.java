@@ -1,5 +1,6 @@
 package com.julook.domain.user.repository.impl;
 
+import com.julook.domain.common.entity.QMakInfo;
 import com.julook.domain.user.entity.QUserMakFolder;
 import com.julook.domain.user.entity.UserMakFolder;
 import com.julook.domain.user.repository.UserMakFolderRepositoryCustom;
@@ -21,6 +22,7 @@ public class UserMakFolderRepositoryImpl implements UserMakFolderRepositoryCusto
 
     private final JPAQueryFactory jpaQueryFactory;
     private final QUserMakFolder qUserMakFolder = QUserMakFolder.userMakFolder;
+    private final QMakInfo qMakInfo = QMakInfo.makInfo;
 
     @Autowired
     public UserMakFolderRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
@@ -32,8 +34,6 @@ public class UserMakFolderRepositoryImpl implements UserMakFolderRepositoryCusto
     public Slice<UserMakFolder> getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable) {
         //마지막 막걸리 번호를 기준으로 페이지네이션 적용
 //        BooleanExpression lastMakNumExpression = qUserMakFolder.makSeq.lt(lastMakNum);
-
-        System.out.println(segmentName);
 
         OrderSpecifier<LocalDateTime> segmentOrderSpecifier;
 
@@ -65,6 +65,15 @@ public class UserMakFolderRepositoryImpl implements UserMakFolderRepositoryCusto
 
 
         return checkLastPage(pageable, results);
+    }
+
+    @Transactional
+    @Override
+    public long getTotalMak() {
+        return jpaQueryFactory
+                .select(qMakInfo.count())
+                .from(qMakInfo)
+                .fetchFirst();
     }
 
     private Slice<UserMakFolder> checkLastPage(Pageable pageable, List<UserMakFolder> results) {

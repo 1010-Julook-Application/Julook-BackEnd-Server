@@ -1,5 +1,6 @@
 package com.julook.domain.user.repository.impl;
 
+import com.julook.domain.user.dto.request.PhoneSignInRequestDTO;
 import com.julook.domain.user.entity.QUser;
 import com.julook.domain.user.entity.User;
 import com.julook.domain.user.repository.SignInRepositoryCustom;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class SignInRepositoryImpl implements SignInRepositoryCustom {
@@ -27,6 +29,15 @@ public class SignInRepositoryImpl implements SignInRepositoryCustom {
                 .fetchOne();
     }
 
+    @Override
+    public int findByUserNickName(String userNickName) {
+        List<User> nickNameList = jpaQueryFactory.selectFrom(qUser)
+                .where(qUser.userNickName.eq(userNickName))
+                .fetch();
+
+        return nickNameList.size();
+    }
+
     @Transactional
     @Override
     public Boolean setUserInfo(Long userId, String nickName, String gender, String ageGroup) {
@@ -43,27 +54,29 @@ public class SignInRepositoryImpl implements SignInRepositoryCustom {
         return affectedRows > 0;
     }
 
+    @Transactional
     @Override
-    public Boolean setUserInfoWithPhone(Long userId, String phone, String birth) {
+    public Boolean setUserInfoWithPhone(Long userID, PhoneSignInRequestDTO userRequest) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
         // '-'로 구분된 부분들을 추출
-//        String[] phoneParts = phone.split("-");
-//
-//        // 추출된 부분들을 각각의 변수에 저장
-//        String phonePrx = phoneParts[0];
-//        String phoneMid = phoneParts[1];
-//        String phoneSfx = phoneParts[2];
-//
-//        long affectedRows = jpaQueryFactory.insert(qUser)
-//                .columns(
-//                        qUser.userID, qUser.userNickName, qUser.userPhonePrefix, qUser.userPhoneMiddle, qUser.userPhoneSuffix,
-//                        qUser.userSex, qUser.userBirth, qUser.isUserVerified, qUser.userJoinDate, qUser.isUserWithdrawal
-//                ).values(
-//                        userId, nickName, gender, ageGroup, false, currentDateTime, false
-//                )
-//                .execute();
-//
-//        return affectedRows > 0;
-        return null;
+        String[] phoneParts = userRequest.getUserPhone().split("-");
+
+        // 추출된 부분들을 각각의 변수에 저장
+        String phonePrx = phoneParts[0];
+        String phoneMid = phoneParts[1];
+        String phoneSfx = phoneParts[2];
+
+        long affectedRows = jpaQueryFactory.insert(qUser)
+                .columns(
+                        qUser.userID, qUser.userNickName, qUser.userPhonePrefix, qUser.userPhoneMiddle, qUser.userPhoneSuffix,
+                        qUser.userSex, qUser.userBirth, qUser.isUserVerified, qUser.userJoinDate, qUser.isUserWithdrawal
+                ).values(
+                        userID, userRequest.getUserNickName(), phonePrx, phoneMid, phoneSfx,
+                        userRequest.getUserSex(), userRequest.getUserBirth(), true, currentDateTime, false
+                )
+                .execute();
+
+        return affectedRows > 0;
     }
 
     @Override

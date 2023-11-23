@@ -3,6 +3,7 @@ package com.julook.domain.user.controller;
 import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
+import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.*;
 import com.julook.domain.user.service.UserActionService;
@@ -13,6 +14,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -134,9 +137,11 @@ public class UserActionController {
             @RequestParam(value = "offset", defaultValue = "0") int offset ) {
 
             Page<MakUserTableDTO> userFolderResults = userActionService.getUserMakFolder(userId, segmentName, offset, pageable.getPageSize());
+            Long totalMak = userActionService.getTotalMak();
 
             UserMakFolderResponseDTO userResults = UserMakFolderResponseDTO.builder()
                     .userId(userId)
+                    .totalMakCount(totalMak)
                     .makUserTable(userFolderResults)
                     .build();
 
@@ -152,6 +157,5 @@ public class UserActionController {
 
 
     }
-
 
 }

@@ -9,4 +9,7 @@ import java.util.List;
 public interface UserMakFolderRepositoryCustom {
     // 사용자 찜 폴더에서 선택에 따른 막걸리 조회
     Slice<UserMakFolder> getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable);
+
+    // 전체 막걸리 개수 조회
+    long getTotalMak();
 }
