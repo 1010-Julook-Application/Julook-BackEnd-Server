@@ -33,7 +33,6 @@ public class FindByUserServiceImpl implements FindByUserService {
         Sort.Direction condition;
         if ("recommend".equals(sort)) {
             condition = Sort.Direction.DESC;
-            sort = "makLikeCount";
         } else if ("highAlcohol".equals(sort)) {
             condition = Sort.Direction.DESC;
             sort = "makAlcoholPercentage";
