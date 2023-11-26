@@ -70,4 +70,7 @@ public class MakInfo {
 
     @Column(name = "mak_img")
     private String makImageNumber;
+
+    @Column(name = "mak_like_count")
+    private Integer makLikeCount;
 }
