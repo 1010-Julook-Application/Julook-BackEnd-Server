@@ -31,7 +31,7 @@ public class FindByUserServiceImpl implements FindByUserService {
 
     public Page<MakInfoDTO> findMakWithPaginationAndSorting(int offset, int pageSize, String sort, List<String> categories) {
         Sort.Direction condition;
-        if ("makSeq".equals(sort)) {
+        if ("recommend".equals(sort)) {
             condition = Sort.Direction.DESC;
         } else if ("highAlcohol".equals(sort)) {
             condition = Sort.Direction.DESC;
@@ -83,9 +83,11 @@ public class FindByUserServiceImpl implements FindByUserService {
         }
 
 
+        PageRequest pageRequest = PageRequest.of(offset, pageSize, Sort.by(condition, sort).and(Sort.by(Sort.Direction.DESC, "makSeq")));
+        Page<MakInfo> result = findByUserRepository.findAll(specifications, pageRequest);
 
-        Page<MakInfo> result = findByUserRepository.findAll(specifications, PageRequest.of(offset, pageSize).withSort(
-                Sort.by(condition, sort)));
+//        Page<MakInfo> result = findByUserRepository.findAll(specifications, PageRequest.of(offset, pageSize).withSort(
+//                Sort.by(condition, sort)));
 
         Page<MakInfoDTO> makInfoDTOList = result.map(entity -> modelMapper.map(entity, MakInfoDTO.class));
 

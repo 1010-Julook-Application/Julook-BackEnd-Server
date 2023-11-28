@@ -1,8 +1,10 @@
 package com.julook.domain.user.controller;
 
 import com.julook.domain.common.dto.response.ApiResponseDTO;
+import com.julook.domain.user.dto.request.CheckAccountRequestDTO;
 import com.julook.domain.user.dto.request.LinkAccountRequestDTO;
 import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
+import com.julook.domain.user.dto.response.CheckAccountResponseDTO;
 import com.julook.domain.user.dto.response.DeleteUserResponseDTO;
 import com.julook.domain.user.dto.response.LinkAccountResponseDTO;
 import com.julook.domain.user.dto.response.ModifyNickResponseDTO;
@@ -71,6 +73,22 @@ public class UserAccountController {
                 .status(HttpStatus.OK.value())
                 .resultMsg(HttpStatus.OK.getReasonPhrase())
                 .result(linkResults)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 기존 회원 여부 확인
+    @PostMapping("/findMatchAccount")
+    public ResponseEntity<ApiResponseDTO<CheckAccountResponseDTO>> findMatchAccount(
+            @RequestBody CheckAccountRequestDTO userRequest) {
+
+        CheckAccountResponseDTO matchedResults = userAccountService.findMatchedAccount(userRequest);
+
+        ApiResponseDTO<CheckAccountResponseDTO> response = ApiResponseDTO.<CheckAccountResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .resultMsg(HttpStatus.OK.getReasonPhrase())
+                .result(matchedResults)
                 .build();
 
         return ResponseEntity.ok(response);

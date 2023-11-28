@@ -32,7 +32,7 @@ public class FindByUserController {
 
     @GetMapping("/findByFeatures")
     public ResponseEntity<ApiResponseDTO<FindByUserResponseDTO>> getAllMaks(
-            @RequestParam(value = "sort", defaultValue = "makSeq") String sort,
+            @RequestParam(value = "sort", defaultValue = "makLikeCount") String sort,
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "category", required = false) List<String> categories

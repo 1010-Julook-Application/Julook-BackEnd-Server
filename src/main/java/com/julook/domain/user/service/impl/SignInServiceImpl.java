@@ -4,22 +4,24 @@ import com.julook.domain.user.dto.request.PhoneSignInRequestDTO;
 import com.julook.domain.user.dto.response.SignInResponseDTO;
 import com.julook.domain.user.dto.response.UserActionResponseDTO;
 import com.julook.domain.user.entity.User;
+import com.julook.domain.user.repository.ProfileRepository;
 import com.julook.domain.user.repository.SignInRepository;
 import com.julook.domain.user.service.SignInService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Random;
 
 @Service
 public class SignInServiceImpl implements SignInService {
     private final SignInRepository signInRepository;
+    private final ProfileRepository profileRepository;
     private final ModelMapper modelMapper;
     @Autowired
-    public SignInServiceImpl(SignInRepository skipAuthSignInRepository, ModelMapper modelMapper) {
+    public SignInServiceImpl(SignInRepository skipAuthSignInRepository, ProfileRepository profileRepository, ModelMapper modelMapper) {
         this.signInRepository = skipAuthSignInRepository;
+        this.profileRepository = profileRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -97,12 +99,12 @@ public class SignInServiceImpl implements SignInService {
     public SignInResponseDTO registerWithPhoneUserResults(Long userId, PhoneSignInRequestDTO userRequest) {
         SignInResponseDTO responseDTO = new SignInResponseDTO();
         try {
-            Boolean isUserSaved = signInRepository.setUserInfoWithPhone(userId, userRequest);
+            Boolean userAccount = signInRepository.setUserInfoWithPhone(userId, userRequest);
 
-            if(isUserSaved) {
+            if(userAccount) {
                 User user = signInRepository.findByUserID(userId);
 
-                if(user == null) {
+                if (user == null){
                     return null;
                 }
 

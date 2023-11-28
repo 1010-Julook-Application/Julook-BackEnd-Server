@@ -1,7 +1,6 @@
 package com.julook.domain.user.repository.impl;
 
-import com.julook.domain.user.dto.request.LinkAccountRequestDTO;
-import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
+import com.julook.domain.user.dto.request.*;
 import com.julook.domain.user.entity.EvaluateMak;
 import com.julook.domain.user.entity.QEvaluateMak;
 import com.julook.domain.user.entity.QUser;
@@ -14,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,36 +51,59 @@ public class ProfileRepositoryCustomImpl implements ProfileRepositoryCustom {
     @Transactional
     @Override
     public User findExistsAccount(LinkAccountRequestDTO userRequest) {
-        // '-'로 구분된 부분들을 추출
-        String[] phoneParts = userRequest.getPhone().split("-");
+        String phone = userRequest.getPhone();
 
-        // 추출된 부분들을 각각의 변수에 저장
-        String phonePrx = phoneParts[0];
+        String formattedPhone = phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3");
+
+        String[] phoneParts = formattedPhone.split(" ");
         String phoneMid = phoneParts[1];
         String phoneSfx = phoneParts[2];
+        String birth = userRequest.getBirth();
 
-        String userBirth = userRequest.getBirth();;
-
-        User userAcount = jpaQueryFactory
+        return jpaQueryFactory
                 .selectFrom(qUser)
-                .where(qUser.userPhoneMiddle.eq(phoneMid).and(qUser.userPhoneSuffix.eq(phoneSfx)
-                        .and(qUser.userBirth.eq(userBirth)).and(qUser.isUserWithdrawal.eq(false))))
+                .where(qUser.userPhoneMiddle.eq(phoneMid)
+                        .and(qUser.userPhoneSuffix.eq(phoneSfx)
+                                .and(qUser.userBirth.eq(birth))
+                                .and(qUser.isUserWithdrawal.eq(false))))
                 .fetchOne();
-
-        return userAcount;
     }
+
+    @Transactional
+    @Override
+    public User findExistsAccount(CheckAccountRequestDTO userRequest) {
+        String phone = userRequest.getPhone();
+
+        String formattedPhone = phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3");
+
+        String[] phoneParts = formattedPhone.split(" ");
+        String phoneMid = phoneParts[1];
+        String phoneSfx = phoneParts[2];
+        String birth = userRequest.getBirth();
+
+        return jpaQueryFactory
+                .selectFrom(qUser)
+                .where(qUser.userPhoneMiddle.eq(phoneMid)
+                        .and(qUser.userPhoneSuffix.eq(phoneSfx)
+                                .and(qUser.userBirth.eq(birth))
+                                .and(qUser.isUserWithdrawal.eq(false))))
+                .fetchOne();
+    }
+
 
     @Transactional
     @Override
     public Boolean linkAccount(User userAccount, LinkAccountRequestDTO userRequest) {
         if (userAccount  == null) {
-            String[] phoneParts = userRequest.getPhone().split("-");
-            String birth = userRequest.getBirth();
+            String phone = userRequest.getPhone();
 
-            // 추출된 부분들을 각각의 변수에 저장
+            String formattedPhone = phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3");
+
+            String[] phoneParts = formattedPhone.split(" ");
             String phonePrx = phoneParts[0];
             String phoneMid = phoneParts[1];
             String phoneSfx = phoneParts[2];
+            String birth = userRequest.getBirth();
 
             long affectedRows = jpaQueryFactory
                     .update(qUser)

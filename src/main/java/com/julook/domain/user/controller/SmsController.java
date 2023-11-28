@@ -2,7 +2,9 @@ package com.julook.domain.user.controller;
 
 import com.julook.domain.common.dto.response.ApiResponseDTO;
 import com.julook.domain.user.dto.request.SMSRequestDTO;
+import com.julook.domain.user.dto.response.CheckAccountResponseDTO;
 import com.julook.domain.user.service.SmsService;
+import com.julook.domain.user.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v2/sms-certification")
 public class SmsController {
     private final SmsService smsSignInService;
+    private final UserAccountService userAccountService;
 
     @Autowired
-    public SmsController(SmsService smsSignInService) {
+    public SmsController(SmsService smsSignInService, UserAccountService userAccountService) {
         this.smsSignInService = smsSignInService;
+        this.userAccountService = userAccountService;
     }
 
     // 인증번호 전달
@@ -47,7 +51,7 @@ public class SmsController {
 
     // 인증번호 확인
     @PostMapping("/confirm")
-    public ResponseEntity<ApiResponseDTO<?>> SmsVerification(@RequestBody SMSRequestDTO requestDTO) throws Exception{
+    public ResponseEntity<ApiResponseDTO<?>> smsVerification(@RequestBody SMSRequestDTO requestDTO) throws Exception{
         try{
             smsSignInService.verifySms(requestDTO);
 
@@ -68,5 +72,4 @@ public class SmsController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-
 }
