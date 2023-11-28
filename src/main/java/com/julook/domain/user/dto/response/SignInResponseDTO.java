@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignInResponseDTO {
+    private Boolean isAlreadyLinked;  // 이미 폰 연동했는 지 여부
     private Long userID;
     private String userNickName;
     private String userPhone;  // 전화번호 끝자리
@@ -21,9 +22,10 @@ public class SignInResponseDTO {
     private LocalDate userJoinDate;
 
 
-    public static SignInResponseDTO phoneSignIn(Long userID, String userNickName, String userPhone, String userBirth,
+    public static SignInResponseDTO phoneSignIn(Boolean isAlreadyLinked, Long userID, String userNickName, String userPhone, String userBirth,
                                                 String userSex, String isUserVerified, String userJoinDate) {
         return SignInResponseDTO.builder()
+                .isAlreadyLinked(isAlreadyLinked)
                 .userID(userID)
                 .userNickName(userNickName)
                 .userPhone(userPhone)
@@ -37,6 +39,7 @@ public class SignInResponseDTO {
     public static SignInResponseDTO SkipSignIn(Long userID, String userNickName, String userSex,
                                                String userAgeRange, String isUserVerified, String userJoinDate) {
         return SignInResponseDTO.builder()
+                .isAlreadyLinked(false)
                 .userID(userID)
                 .userNickName(userNickName)
                 .userSex(userSex)

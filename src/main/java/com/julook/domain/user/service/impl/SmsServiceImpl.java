@@ -6,6 +6,7 @@ import com.julook.domain.user.service.SmsService;
 import com.julook.global.exception.AuthNumberMismatchException;
 import com.julook.global.exception.SmsSendFailedException;
 import com.julook.global.utils.SmsUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -21,14 +22,14 @@ public class SmsServiceImpl implements SmsService {
     private final SmsUtils smsUtils;
     private final SmsCertificationDao smsCertificationDao;
 
-
+    @Transactional
     @Override
     public void sendSms(SMSRequestDTO userRequest) {
-        String to = userRequest.getPhone().replace("-","");
+        String to = userRequest.getPhone();
         String certificationNumber = makeRandomNumber();
 
         System.out.println(certificationNumber);
-        System.out.println(userRequest.getPhone());
+        System.out.println(to);
 
         try {
             SingleMessageSentResponse result = smsUtils.sendOne(to, certificationNumber);
@@ -42,13 +43,15 @@ public class SmsServiceImpl implements SmsService {
         smsCertificationDao.createSmsCertification(to,certificationNumber);
     }
 
+    @Transactional
     @Override
     public void verifySms(SMSRequestDTO userRequest) {
-        if (isVerify(userRequest)) {
-            smsCertificationDao.removeSmsCertification(userRequest.getPhone());
-        } else {
+        if (!isVerify(userRequest)) {
             throw new AuthNumberMismatchException("인증번호가 일치하지 않습니다.");
         }
+        smsCertificationDao.removeSmsCertification(userRequest.getPhone());
+
+
     }
 
     private boolean isVerify(SMSRequestDTO userRequest) {

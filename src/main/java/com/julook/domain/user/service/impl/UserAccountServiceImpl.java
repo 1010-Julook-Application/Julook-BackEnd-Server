@@ -2,10 +2,8 @@ package com.julook.domain.user.service.impl;
 
 import com.julook.domain.user.dto.request.LinkAccountRequestDTO;
 import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
-import com.julook.domain.user.dto.response.DeleteUserResponseDTO;
-import com.julook.domain.user.dto.response.LinkAccountResponseDTO;
-import com.julook.domain.user.dto.response.ModifyNickResponseDTO;
-import com.julook.domain.user.dto.response.UserActionResponseDTO;
+import com.julook.domain.user.dto.request.SMSRequestDTO;
+import com.julook.domain.user.dto.response.*;
 import com.julook.domain.user.repository.ProfileRepository;
 import com.julook.domain.user.service.UserAccountService;
 import com.julook.domain.user.entity.User;
@@ -14,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -121,4 +121,29 @@ public class UserAccountServiceImpl implements UserAccountService {
         return responseDTO;
     }
 
+    @Override
+    public CheckAccountResponseDTO findMatchedAccount(SMSRequestDTO userRequest) {
+        CheckAccountResponseDTO responseDTO;
+        List<User> matchedUserList = profileRepository.findExistsAccount(userRequest);
+
+        if(matchedUserList.isEmpty()) {
+            responseDTO = CheckAccountResponseDTO.builder()
+                    .isAccountExisted(false)
+                    .build();
+        } else {
+            int size = matchedUserList.size();
+            List<String> nickList = new ArrayList<>();
+
+            for (User user : matchedUserList) {
+                nickList.add(user.getUserNickName());
+            }
+
+            responseDTO = CheckAccountResponseDTO.builder()
+                    .isAccountExisted(true)
+                    .numberOfAccount(size)
+                    .userNickName(nickList)
+                    .build();
+        }
+        return responseDTO;
+    }
 }

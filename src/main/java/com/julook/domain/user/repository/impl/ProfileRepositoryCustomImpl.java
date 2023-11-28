@@ -2,6 +2,8 @@ package com.julook.domain.user.repository.impl;
 
 import com.julook.domain.user.dto.request.LinkAccountRequestDTO;
 import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
+import com.julook.domain.user.dto.request.PhoneSignInRequestDTO;
+import com.julook.domain.user.dto.request.SMSRequestDTO;
 import com.julook.domain.user.entity.EvaluateMak;
 import com.julook.domain.user.entity.QEvaluateMak;
 import com.julook.domain.user.entity.QUser;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -59,16 +62,56 @@ public class ProfileRepositoryCustomImpl implements ProfileRepositoryCustom {
         String phoneMid = phoneParts[1];
         String phoneSfx = phoneParts[2];
 
-        String userBirth = userRequest.getBirth();;
+        String userBirth = userRequest.getBirth();
 
-        User userAcount = jpaQueryFactory
-                .selectFrom(qUser)
-                .where(qUser.userPhoneMiddle.eq(phoneMid).and(qUser.userPhoneSuffix.eq(phoneSfx)
-                        .and(qUser.userBirth.eq(userBirth)).and(qUser.isUserWithdrawal.eq(false))))
-                .fetchOne();
-
-        return userAcount;
+        return findExistsAccountInternal(phoneMid, phoneSfx, userBirth);
     }
+
+    @Override
+    public User findExistsAccount(PhoneSignInRequestDTO userRequest) {
+        // '-'로 구분된 부분들을 추출
+        String[] phoneParts = userRequest.getUserPhone().split("-");
+
+        // 추출된 부분들을 각각의 변수에 저장
+        String phonePrx = phoneParts[0];
+        String phoneMid = phoneParts[1];
+        String phoneSfx = phoneParts[2];
+
+        String userBirth = userRequest.getUserBirth();
+
+        return findExistsAccountInternal(phoneMid, phoneSfx, userBirth);
+    }
+
+    @Override
+    public List<User> findExistsAccount(SMSRequestDTO userRequest) {
+        String phone = userRequest.getPhone();
+
+        String formattedPhone = phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3");
+
+        String[] phoneParts = formattedPhone.split(" ");
+        String phoneMid = phoneParts[1];
+        String phoneSfx = phoneParts[2];
+
+        return jpaQueryFactory
+                .selectFrom(qUser)
+                .where(qUser.userPhoneMiddle.eq(phoneMid)
+                        .and(qUser.userPhoneSuffix.eq(phoneSfx)
+                                .and(qUser.isUserWithdrawal.eq(false))))
+                .fetch();
+    }
+
+
+
+    private User findExistsAccountInternal(String phoneMid, String phoneSfx, String userBirth) {
+        return jpaQueryFactory
+                .selectFrom(qUser)
+                .where(qUser.userPhoneMiddle.eq(phoneMid)
+                        .and(qUser.userPhoneSuffix.eq(phoneSfx)
+                                .and(qUser.userBirth.eq(userBirth))
+                                .and(qUser.isUserWithdrawal.eq(false))))
+                .fetchOne();
+    }
+
 
     @Transactional
     @Override
