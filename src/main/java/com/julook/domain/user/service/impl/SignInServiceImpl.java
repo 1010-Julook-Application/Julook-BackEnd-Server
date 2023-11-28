@@ -99,18 +99,16 @@ public class SignInServiceImpl implements SignInService {
     public SignInResponseDTO registerWithPhoneUserResults(Long userId, PhoneSignInRequestDTO userRequest) {
         SignInResponseDTO responseDTO = new SignInResponseDTO();
         try {
-            User userAccount = profileRepository.findExistsAccount(userRequest);
+            Boolean userAccount = signInRepository.setUserInfoWithPhone(userId, userRequest);
 
-
-            if(userAccount == null) {
+            if(userAccount) {
                 User user = signInRepository.findByUserID(userId);
 
-                if(user == null) {
+                if (user == null){
                     return null;
                 }
 
                 responseDTO = SignInResponseDTO.phoneSignIn(
-                        false,
                         user.getUserID(),
                         user.getUserNickName(),
                         user.getUserPhoneSuffix(),
@@ -118,16 +116,6 @@ public class SignInServiceImpl implements SignInService {
                         user.getUserSex(),
                         user.getIsUserVerified(),
                         String.valueOf(user.getUserJoinDate()));
-            } else {
-                responseDTO = SignInResponseDTO.phoneSignIn(
-                        true,
-                        userAccount.getUserID(),
-                        userAccount.getUserNickName(),
-                        userAccount.getUserPhoneSuffix(),
-                        userAccount.getUserBirth(),
-                        userAccount.getUserSex(),
-                        userAccount.getIsUserVerified(),
-                        String.valueOf(userAccount.getUserJoinDate()));
             }
 
         }catch (Exception ex) {

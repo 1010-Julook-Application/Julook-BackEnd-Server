@@ -54,12 +54,10 @@ public class SmsController {
     public ResponseEntity<ApiResponseDTO<?>> smsVerification(@RequestBody SMSRequestDTO requestDTO) throws Exception{
         try{
             smsSignInService.verifySms(requestDTO);
-            CheckAccountResponseDTO checkAccountResult = userAccountService.findMatchedAccount(requestDTO);
 
             ApiResponseDTO<Object> response = ApiResponseDTO.builder()
                     .status(HttpStatus.OK.value())
                     .resultMsg("SMS 본인 인증 성공")
-                    .result(checkAccountResult)
                     .build();
 
             return ResponseEntity.ok(response);

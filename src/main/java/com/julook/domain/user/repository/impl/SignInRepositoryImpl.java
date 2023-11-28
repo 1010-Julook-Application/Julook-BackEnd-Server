@@ -59,9 +59,10 @@ public class SignInRepositoryImpl implements SignInRepositoryCustom {
     public Boolean setUserInfoWithPhone(Long userID, PhoneSignInRequestDTO userRequest) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         // '-'로 구분된 부분들을 추출
-        String[] phoneParts = userRequest.getUserPhone().split("-");
+        String phone = userRequest.getUserPhone();
+        String formattedPhone = phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3");
 
-        // 추출된 부분들을 각각의 변수에 저장
+        String[] phoneParts = formattedPhone.split(" ");
         String phonePrx = phoneParts[0];
         String phoneMid = phoneParts[1];
         String phoneSfx = phoneParts[2];

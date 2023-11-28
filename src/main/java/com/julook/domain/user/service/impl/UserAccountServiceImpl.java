@@ -1,5 +1,6 @@
 package com.julook.domain.user.service.impl;
 
+import com.julook.domain.user.dto.request.CheckAccountRequestDTO;
 import com.julook.domain.user.dto.request.LinkAccountRequestDTO;
 import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
 import com.julook.domain.user.dto.request.SMSRequestDTO;
@@ -122,26 +123,28 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public CheckAccountResponseDTO findMatchedAccount(SMSRequestDTO userRequest) {
+    public CheckAccountResponseDTO findMatchedAccount(CheckAccountRequestDTO userRequest) {
         CheckAccountResponseDTO responseDTO;
-        List<User> matchedUserList = profileRepository.findExistsAccount(userRequest);
+        SignInResponseDTO accountResult;
+        User matchedUserList = profileRepository.findExistsAccount(userRequest);
 
-        if(matchedUserList.isEmpty()) {
-            responseDTO = CheckAccountResponseDTO.builder()
-                    .isAccountExisted(false)
-                    .build();
-        } else {
-            int size = matchedUserList.size();
-            List<String> nickList = new ArrayList<>();
-
-            for (User user : matchedUserList) {
-                nickList.add(user.getUserNickName());
-            }
+        if(matchedUserList != null){
+            accountResult = SignInResponseDTO.phoneSignIn(
+                    matchedUserList.getUserID(),
+                    matchedUserList.getUserNickName(),
+                    matchedUserList.getUserPhoneSuffix(),
+                    matchedUserList.getUserBirth(),
+                    matchedUserList.getUserSex(),
+                    matchedUserList.getIsUserVerified(),
+                    String.valueOf(matchedUserList.getUserJoinDate()));
 
             responseDTO = CheckAccountResponseDTO.builder()
                     .isAccountExisted(true)
-                    .numberOfAccount(size)
-                    .userNickName(nickList)
+                    .userResults(accountResult)
+                    .build();
+        }else {
+            responseDTO = CheckAccountResponseDTO.builder()
+                    .isAccountExisted(false)
                     .build();
         }
         return responseDTO;

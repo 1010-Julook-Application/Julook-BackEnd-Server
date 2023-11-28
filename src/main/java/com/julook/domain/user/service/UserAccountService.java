@@ -1,5 +1,6 @@
 package com.julook.domain.user.service;
 
+import com.julook.domain.user.dto.request.CheckAccountRequestDTO;
 import com.julook.domain.user.dto.request.LinkAccountRequestDTO;
 import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
 import com.julook.domain.user.dto.request.SMSRequestDTO;
@@ -22,5 +23,5 @@ public interface UserAccountService {
     LinkAccountResponseDTO linkUserAccount(LinkAccountRequestDTO userRequest);
 
     // SMS 인증 후, 핸드폰 번호와 일치하는 계정 확인
-    CheckAccountResponseDTO findMatchedAccount(SMSRequestDTO userRequest);
+    CheckAccountResponseDTO findMatchedAccount(CheckAccountRequestDTO userRequest);
 }

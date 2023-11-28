@@ -11,7 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 public class CheckAccountResponseDTO {
     private Boolean isAccountExisted;  // 계정 존재 여부
-    private Integer numberOfAccount;  // 조회된 계정 개수
-    private List<String> userNickName;  // 닉네임 개수
-
+    SignInResponseDTO userResults;
 }
