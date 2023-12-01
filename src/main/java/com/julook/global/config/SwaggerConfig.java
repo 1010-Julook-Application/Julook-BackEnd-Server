@@ -19,7 +19,7 @@ public class SwaggerConfig {
         String[] paths = {"/api/**"};
 
         return GroupedOpenApi.builder()
-                .group("Julook OPEN API v1")
+                .group("Julook OPEN API v2")
                 .pathsToMatch(paths)
                 .build();
     }
