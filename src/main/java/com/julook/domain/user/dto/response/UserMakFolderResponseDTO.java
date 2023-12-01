@@ -16,5 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UserMakFolderResponseDTO {
     private Long userId;
+    private Long totalMakCount;
     private Page<MakUserTableDTO> makUserTable;
 }

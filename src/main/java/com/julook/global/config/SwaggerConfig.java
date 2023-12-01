@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(title = "Julook App", version = "v1"))
+        info = @Info(title = "Julook App", version = "v2"))
 @RequiredArgsConstructor
 @Configuration
 public class SwaggerConfig {
@@ -19,7 +19,7 @@ public class SwaggerConfig {
         String[] paths = {"/api/**"};
 
         return GroupedOpenApi.builder()
-                .group("Julook OPEN API v1")
+                .group("Julook OPEN API v2")
                 .pathsToMatch(paths)
                 .build();
     }

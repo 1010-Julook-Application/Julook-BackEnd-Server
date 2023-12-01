@@ -2,6 +2,7 @@ package com.julook.domain.user.service;
 
 import com.julook.domain.user.dto.request.CommentRequestDTO;
 import com.julook.domain.user.dto.request.EvaluateMakRequestDTO;
+import com.julook.domain.user.dto.request.ModifyNickRequestDTO;
 import com.julook.domain.user.dto.request.WishRequestDTO;
 import com.julook.domain.user.dto.response.*;
 import com.julook.domain.user.entity.User;
@@ -34,5 +35,7 @@ public interface UserActionService {
 //    UserMakFolderResponseDTO getUserMakFolder(Long userId, String segmentName, int lastMakNum, Pageable pageable);
     Page<MakUserTableDTO> getUserMakFolder(Long userId, String segmentName, int offset, int pageSize);
 
+    // 전체 막걸리 개수
+    Long getTotalMak();
 
 }
